@@ -20,7 +20,7 @@ const World = () => {
 
 	return (
 		<>
-			<PerspectiveCamera makeDefault position={[10, 10, 10]} />
+			<PerspectiveCamera makeDefault fov={65} />
 			<OrbitControls
 				makeDefault
 				enablePan={false}
@@ -28,13 +28,15 @@ const World = () => {
 				maxPolarAngle={Math.PI / 2.5}
 			/>
 			<pointLight position={[10, 10, 10]} />
-			<Bounds fit clip observe damping={0.5} margin={1.5}>
+			<Bounds fit clip observe damping={0.5} margin={2.25}>
 				<Center disableY>
 					{stackIds.map((stackId, index) => (
 						<Stack
 							key={stackId}
-							stackId={stackId}
 							position={positions[index]}
+							dimension={[1, 1]}
+							heightScale={0.25}
+							stackId={stackId}
 						/>
 					))}
 				</Center>

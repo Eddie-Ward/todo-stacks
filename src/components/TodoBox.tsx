@@ -4,11 +4,14 @@ import type { MeshProps } from "@react-three/fiber";
 import type { Todo } from "../../types.d";
 import { type TodoActionType } from "../shared/todoReducer";
 import { Html, type Plane, RoundedBox, useTexture } from "@react-three/drei";
+import Checkmark from "./design/Checkmark";
+import BaseTodoModal from "./design/modals/BaseTodo";
 
 interface BoxProps extends MeshProps {
 	index: number;
 	last: number;
 	position: [number, number, number];
+	dimension: [number, number, number];
 	todo: Todo;
 	hue: number;
 	dispatch: React.Dispatch<TodoActionType>;
@@ -19,6 +22,7 @@ const TodoBox = ({
 	index,
 	last,
 	position,
+	dimension,
 	todo,
 	hue,
 	dispatch,
@@ -29,10 +33,12 @@ const TodoBox = ({
 	);
 	const [hovered, setHovered] = useState(false);
 
+	console.log(position);
+
 	return (
 		<RoundedBox
 			position={position}
-			args={[1, todo.duration * 0.25, 1]}
+			args={dimension}
 			radius={0.1}
 			onClick={() => {
 				if (index === last) {
@@ -50,14 +56,11 @@ const TodoBox = ({
 				setHovered(false);
 			}}>
 			{index === last ? (
-				<Html
-					as="div"
-					className="w-40 bg-t-light-blue text-center"
-					style={{ translate: "-50% -100%" }}
-					position={[0, todo.duration * 0.125 + 0.25, 0]}>
-					<h1>{todo.title}</h1>
-					<p>{todo.body}</p>
-				</Html>
+				<BaseTodoModal
+					title={todo.title}
+					body={todo.body}
+					duration={todo.duration}
+				/>
 			) : null}
 			<meshMatcapMaterial
 				matcap={matcap}

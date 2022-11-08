@@ -14,8 +14,6 @@ const Home: NextPage = () => {
 		<>
 			<Head>
 				<title>Todo Stacks</title>
-				<meta name="description" content="A 3D todo list companion" />
-				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<main
 				className="h-screen w-screen"

@@ -10,6 +10,9 @@ module.exports = {
 				"t-light-orange": "#FFB703",
 				"t-dark-orange": "#FB8500",
 			},
+			fontFamily: {
+				cursive: ["'Atma'", "'cursive'"],
+			},
 		},
 	},
 	plugins: [],
