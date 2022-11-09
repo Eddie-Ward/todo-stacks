@@ -1,10 +1,9 @@
-import { Edges, Plane, useBounds } from "@react-three/drei";
+import { useBounds } from "@react-three/drei";
 import React, { useEffect, useMemo, useReducer, useState } from "react";
-import { ClassRegistry } from "superjson/dist/class-registry";
 import { Stack } from "../../types.d";
 import { sortStack, todoReducer } from "../shared/todoReducer";
 import { todos as initialTodos } from "../utils/todos";
-import BaseTodoModal from "./design/modals/BaseTodo";
+import StackFloor from "./StackFloor";
 import TodoBox from "./TodoBox";
 
 interface StackProps {
@@ -18,13 +17,11 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 	const bounds = useBounds();
 
 	const [visible, setVisible] = useState(false);
+
 	const [stack, dispatch] = useReducer(
 		todoReducer,
 		sortStack(initialTodos.find((stack) => stack.id === stackId) as Stack)
 	);
-
-	console.log(stack);
-	console.log(heightScale);
 
 	useEffect(() => {
 		return () => {
@@ -41,7 +38,6 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 		let offsetY = 0;
 		const results = [];
 		for (let i = 0; i < stack.todos.length; i++) {
-			console.log(stack.todos[i].duration);
 			curHeight = stack.todos[i].duration * heightScale;
 			results.push(offsetY + curHeight / 2);
 			offsetY += curHeight;
@@ -49,23 +45,15 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 		return results;
 	}, [stack, heightScale]);
 
-	console.log(heights);
-
 	return (
 		<>
-			<Plane
-				position={[position[0], 0.01, position[1]]}
-				args={dimension}
+			<StackFloor
+				position={position}
+				dimension={dimension}
 				scale={1.5}
-				rotation={[-Math.PI / 2, 0, 0]}
-				visible={stack.todos.length > 0 ? visible : true}>
-				<meshBasicMaterial
-					transparent={true}
-					color="#FB8500"
-					opacity={0.5}
-				/>
-				<Edges color="#FB8500" />
-			</Plane>
+				visible={visible}
+				length={stack.todos.length}
+			/>
 			{stack.todos.map((todo, index) => (
 				<TodoBox
 					key={todo.id}
@@ -83,8 +71,8 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 					]}
 					todo={todo}
 					hue={randHue}
-					dispatch={dispatch}
 					setVisible={setVisible}
+					dispatch={dispatch}
 				/>
 			))}
 		</>

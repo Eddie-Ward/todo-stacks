@@ -1,15 +1,24 @@
 import { Html } from "@react-three/drei";
 import React from "react";
 import type { Duration } from "../../../../types";
-import Checkmark from "../Checkmark";
+import { type TodoActionType } from "../../../shared/todoReducer";
+import Checkmark from "../svg/Checkmark";
 
 interface BaseTodoProps {
+	id: string;
 	title: string;
 	body: string;
 	duration: Duration;
+	dispatch: React.Dispatch<TodoActionType>;
 }
 
-const BaseTodoModal = ({ title, body, duration }: BaseTodoProps) => {
+const BaseTodoModal = ({
+	id,
+	title,
+	body,
+	duration,
+	dispatch,
+}: BaseTodoProps) => {
 	return (
 		<Html
 			as="div"
@@ -25,7 +34,9 @@ const BaseTodoModal = ({ title, body, duration }: BaseTodoProps) => {
 			<button className="rounded-lg bg-t-light-orange py-1 px-4 font-cursive text-2xl text-white hover:bg-t-dark-orange">
 				Edit
 			</button>
-			<button className="absolute right-0 bottom-0 translate-x-1/3 translate-y-1/3 rounded-lg bg-t-light-orange hover:bg-t-dark-orange">
+			<button
+				className="absolute right-0 bottom-0 translate-x-1/3 translate-y-1/3 rounded-lg bg-t-light-orange hover:bg-t-dark-orange"
+				onClick={() => dispatch({ type: "remove_todo", payload: id })}>
 				<Checkmark />
 			</button>
 		</Html>

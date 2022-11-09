@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { useFrame } from "@react-three/fiber";
+import React, { useContext, useState } from "react";
 import type { MeshProps } from "@react-three/fiber";
 import type { Todo } from "../../types.d";
+import { RoundedBox, useTexture } from "@react-three/drei";
 import { type TodoActionType } from "../shared/todoReducer";
-import { Html, type Plane, RoundedBox, useTexture } from "@react-three/drei";
-import Checkmark from "./design/Checkmark";
-import BaseTodoModal from "./design/modals/BaseTodo";
+import BaseTodoModal from "./design/modals/BaseTodoModal";
+import EditTodoModal from "./design/modals/EditTodoModal";
+import { EventsContext } from "../shared/EventContext";
 
 interface BoxProps extends MeshProps {
 	index: number;
@@ -14,8 +14,8 @@ interface BoxProps extends MeshProps {
 	dimension: [number, number, number];
 	todo: Todo;
 	hue: number;
-	dispatch: React.Dispatch<TodoActionType>;
 	setVisible: React.Dispatch<React.SetStateAction<boolean>>;
+	dispatch: React.Dispatch<TodoActionType>;
 }
 
 const TodoBox = ({
@@ -25,43 +25,57 @@ const TodoBox = ({
 	dimension,
 	todo,
 	hue,
-	dispatch,
 	setVisible,
+	dispatch,
 }: BoxProps) => {
 	const matcap = useTexture(
 		"./matcaps/Matcap_8D8D8D_DDDDDD_CCCCCC_B7B7B7-256px.png"
 	);
+	const { disableEvents, setDisableEvents } = useContext(EventsContext);
 	const [hovered, setHovered] = useState(false);
 
-	console.log(position);
+	const [baseModalOpen, setBaseModalOpen] = useState(false);
+	const [editModalOpen, setEditModalOpen] = useState(false);
+
+	console.log(disableEvents);
 
 	return (
 		<RoundedBox
 			position={position}
 			args={dimension}
 			radius={0.1}
-			onClick={() => {
-				if (index === last) {
-					dispatch({ type: "remove_todo", payload: todo.id });
+			onClick={(e) => {
+				e.stopPropagation();
+				if (!disableEvents) {
+					if (index === last) {
+						setBaseModalOpen(!baseModalOpen);
+					} else {
+						setEditModalOpen(true);
+						setDisableEvents(true);
+					}
 				}
+			}}
+			onPointerMissed={(e) => {
+				e.stopPropagation();
+				setBaseModalOpen(false);
+				setEditModalOpen(false);
+				setHovered(false);
+				setDisableEvents(false);
 			}}
 			onPointerEnter={(e) => {
 				e.stopPropagation();
-				setVisible(true);
-				setHovered(true);
+				if (!disableEvents) {
+					setVisible(true);
+					setHovered(true);
+				}
 			}}
 			onPointerLeave={(e) => {
 				e.stopPropagation();
-				setVisible(false);
-				setHovered(false);
+				if (!disableEvents) {
+					setVisible(false);
+					setHovered(false);
+				}
 			}}>
-			{index === last ? (
-				<BaseTodoModal
-					title={todo.title}
-					body={todo.body}
-					duration={todo.duration}
-				/>
-			) : null}
 			<meshMatcapMaterial
 				matcap={matcap}
 				color={
@@ -70,6 +84,19 @@ const TodoBox = ({
 						: `hsl(${hue}, 70%, ${todo.priority * 9 + 55}%)`
 				}
 			/>
+			{index == last ? (
+				baseModalOpen ? (
+					<BaseTodoModal
+						id={todo.id}
+						title={todo.title}
+						body={todo.body}
+						duration={todo.duration}
+						dispatch={dispatch}
+					/>
+				) : null
+			) : editModalOpen ? (
+				<EditTodoModal />
+			) : null}
 		</RoundedBox>
 	);
 };

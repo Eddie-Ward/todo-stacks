@@ -5,10 +5,11 @@ import {
 	ContactShadows,
 	Center,
 } from "@react-three/drei";
-import React, { useReducer } from "react";
+import React, { useReducer, useState } from "react";
 import { stacks as initialStackIds } from "../utils/todos";
 import Stack from "./Stack";
 import { stackReducer } from "../shared/stackReducer";
+import { EventsContext } from "../shared/EventContext";
 
 const positions: Array<[number, number]> = [
 	[1, 1],
@@ -17,6 +18,7 @@ const positions: Array<[number, number]> = [
 
 const World = () => {
 	const [stackIds, dispatch] = useReducer(stackReducer, initialStackIds);
+	const [disableEvents, setDisableEvents] = useState(false);
 
 	return (
 		<>
@@ -30,15 +32,18 @@ const World = () => {
 			<pointLight position={[10, 10, 10]} />
 			<Bounds fit clip observe damping={0.5} margin={2.25}>
 				<Center disableY>
-					{stackIds.map((stackId, index) => (
-						<Stack
-							key={stackId}
-							position={positions[index]}
-							dimension={[1, 1]}
-							heightScale={0.25}
-							stackId={stackId}
-						/>
-					))}
+					<EventsContext.Provider
+						value={{ disableEvents, setDisableEvents }}>
+						{stackIds.map((stackId, index) => (
+							<Stack
+								key={stackId}
+								position={positions[index]}
+								dimension={[1, 1]}
+								heightScale={0.25}
+								stackId={stackId}
+							/>
+						))}
+					</EventsContext.Provider>
 				</Center>
 			</Bounds>
 			<ContactShadows
