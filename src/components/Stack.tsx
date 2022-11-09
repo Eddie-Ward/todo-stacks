@@ -1,8 +1,17 @@
 import { useBounds } from "@react-three/drei";
-import React, { useEffect, useMemo, useReducer, useState } from "react";
+import React, {
+	useContext,
+	useEffect,
+	useMemo,
+	useReducer,
+	useState,
+} from "react";
 import { Stack } from "../../types.d";
+import { EventsContext } from "../shared/EventContext";
 import { sortStack, todoReducer } from "../shared/todoReducer";
 import { todos as initialTodos } from "../utils/todos";
+import BaseTodoModal from "./design/modals/BaseTodoModal";
+import EditTodoModal from "./design/modals/EditTodoModal";
 import StackFloor from "./StackFloor";
 import TodoBox from "./TodoBox";
 
@@ -15,8 +24,11 @@ interface StackProps {
 
 const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 	const bounds = useBounds();
+	const { setDisableEvents } = useContext(EventsContext);
 
 	const [visible, setVisible] = useState(false);
+	const [editTodo, setEditTodo] = useState(-1);
+	const [baseModalOpen, setBaseModalOpen] = useState(false);
 
 	const [stack, dispatch] = useReducer(
 		todoReducer,
@@ -24,10 +36,16 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 	);
 
 	useEffect(() => {
+		if (baseModalOpen || editTodo !== -1) {
+			setDisableEvents(true);
+		} else {
+			setDisableEvents(false);
+		}
 		return () => {
+			setDisableEvents(false);
 			bounds.refresh().clip().fit();
 		};
-	}, [stack, bounds]);
+	}, [stack, bounds, editTodo, baseModalOpen, setDisableEvents]);
 
 	const randHue = useMemo(() => {
 		return Math.floor(Math.random() * (36 - 0) + 0) * 10;
@@ -51,7 +69,7 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 				position={position}
 				dimension={dimension}
 				scale={1.5}
-				visible={visible}
+				visible={visible || baseModalOpen || editTodo !== -1}
 				length={stack.todos.length}
 			/>
 			{stack.todos.map((todo, index) => (
@@ -72,9 +90,25 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 					todo={todo}
 					hue={randHue}
 					setVisible={setVisible}
-					dispatch={dispatch}
-				/>
+					setBaseModal={setBaseModalOpen}
+					setEditTodo={setEditTodo}>
+					{index === stack.todos.length - 1 && baseModalOpen ? (
+						<BaseTodoModal
+							id={todo.id}
+							title={todo.title}
+							body={todo.body}
+							duration={todo.duration}
+							dispatch={dispatch}
+						/>
+					) : null}
+				</TodoBox>
 			))}
+			{editTodo !== -1 ? (
+				<EditTodoModal
+					setEditTodo={setEditTodo}
+					todo={stack.todos[editTodo]}
+				/>
+			) : null}
 		</>
 	);
 };

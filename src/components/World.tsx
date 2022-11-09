@@ -53,8 +53,6 @@ const World = () => {
 				far={25}
 				blur={1.5}
 			/>
-			{/* <Floor position={[0, 0, 0]} /> */}
-			{/* <Floor position={[0, -2, 0]} /> */}
 		</>
 	);
 };

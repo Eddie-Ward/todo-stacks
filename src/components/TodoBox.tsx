@@ -1,10 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import type { MeshProps } from "@react-three/fiber";
 import type { Todo } from "../../types.d";
 import { RoundedBox, useTexture } from "@react-three/drei";
-import { type TodoActionType } from "../shared/todoReducer";
-import BaseTodoModal from "./design/modals/BaseTodoModal";
-import EditTodoModal from "./design/modals/EditTodoModal";
 import { EventsContext } from "../shared/EventContext";
 
 interface BoxProps extends MeshProps {
@@ -15,7 +12,8 @@ interface BoxProps extends MeshProps {
 	todo: Todo;
 	hue: number;
 	setVisible: React.Dispatch<React.SetStateAction<boolean>>;
-	dispatch: React.Dispatch<TodoActionType>;
+	setBaseModal: React.Dispatch<React.SetStateAction<boolean>>;
+	setEditTodo: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const TodoBox = ({
@@ -26,18 +24,23 @@ const TodoBox = ({
 	todo,
 	hue,
 	setVisible,
-	dispatch,
+	setBaseModal,
+	setEditTodo,
+	children,
 }: BoxProps) => {
 	const matcap = useTexture(
 		"./matcaps/Matcap_8D8D8D_DDDDDD_CCCCCC_B7B7B7-256px.png"
 	);
-	const { disableEvents, setDisableEvents } = useContext(EventsContext);
+	const { disableEvents } = useContext(EventsContext);
 	const [hovered, setHovered] = useState(false);
+	const [selected, setSelected] = useState(false);
 
-	const [baseModalOpen, setBaseModalOpen] = useState(false);
-	const [editModalOpen, setEditModalOpen] = useState(false);
-
-	console.log(disableEvents);
+	useEffect(() => {
+		if (!disableEvents) {
+			setHovered(false);
+			setSelected(false);
+		}
+	}, [disableEvents]);
 
 	return (
 		<RoundedBox
@@ -48,55 +51,44 @@ const TodoBox = ({
 				e.stopPropagation();
 				if (!disableEvents) {
 					if (index === last) {
-						setBaseModalOpen(!baseModalOpen);
+						setBaseModal(true);
 					} else {
-						setEditModalOpen(true);
-						setDisableEvents(true);
+						setEditTodo(index);
 					}
+					setSelected(true);
 				}
 			}}
 			onPointerMissed={(e) => {
 				e.stopPropagation();
-				setBaseModalOpen(false);
-				setEditModalOpen(false);
+				setBaseModal(false);
 				setHovered(false);
-				setDisableEvents(false);
+				setVisible(false);
 			}}
 			onPointerEnter={(e) => {
 				e.stopPropagation();
 				if (!disableEvents) {
-					setVisible(true);
 					setHovered(true);
+					setVisible(true);
 				}
 			}}
 			onPointerLeave={(e) => {
 				e.stopPropagation();
 				if (!disableEvents) {
-					setVisible(false);
 					setHovered(false);
+					setVisible(false);
 				}
 			}}>
 			<meshMatcapMaterial
 				matcap={matcap}
 				color={
-					hovered
+					selected
+						? "#FB8500"
+						: hovered && !disableEvents
 						? "hotpink"
 						: `hsl(${hue}, 70%, ${todo.priority * 9 + 55}%)`
 				}
 			/>
-			{index == last ? (
-				baseModalOpen ? (
-					<BaseTodoModal
-						id={todo.id}
-						title={todo.title}
-						body={todo.body}
-						duration={todo.duration}
-						dispatch={dispatch}
-					/>
-				) : null
-			) : editModalOpen ? (
-				<EditTodoModal />
-			) : null}
+			{children}
 		</RoundedBox>
 	);
 };
