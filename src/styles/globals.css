@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
+
+@layer components {
+	.btn-icon {
+		@apply rounded-lg bg-th-orange-500 hover:bg-th-orange-700;
+	}
+	.input-text {
+		@apply block rounded-lg bg-th-blue-400 p-3 font-cursive text-lg font-medium text-th-blue-900;
+	}
+	.input-select {
+		@apply rounded-lg bg-th-blue-400 p-3 font-cursive text-lg font-medium text-th-blue-900;
+	}
+}
+
 @tailwind utilities;

@@ -12,6 +12,7 @@ import { sortStack, todoReducer } from "../shared/todoReducer";
 import { todos as initialTodos } from "../utils/todos";
 import BaseTodoModal from "./design/modals/BaseTodoModal";
 import EditTodoModal from "./design/modals/EditTodoModal";
+import NewTodoModal from "./design/modals/NewTodoModal";
 import StackFloor from "./StackFloor";
 import TodoBox from "./TodoBox";
 
@@ -27,8 +28,9 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 	const { setDisableEvents } = useContext(EventsContext);
 
 	const [visible, setVisible] = useState(false);
-	const [editTodo, setEditTodo] = useState(-1);
 	const [baseModalOpen, setBaseModalOpen] = useState(false);
+	const [editTodo, setEditTodo] = useState(-1);
+	const [newTodo, setNewTodo] = useState(false);
 
 	const [stack, dispatch] = useReducer(
 		todoReducer,
@@ -95,10 +97,13 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 					{index === stack.todos.length - 1 && baseModalOpen ? (
 						<BaseTodoModal
 							id={todo.id}
+							index={index}
 							title={todo.title}
 							body={todo.body}
 							duration={todo.duration}
 							dispatch={dispatch}
+							setEditTodo={setEditTodo}
+							setNewTodo={setNewTodo}
 						/>
 					) : null}
 				</TodoBox>
@@ -109,6 +114,7 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 					todo={stack.todos[editTodo]}
 				/>
 			) : null}
+			{newTodo ? <NewTodoModal setNewTodo={setNewTodo} /> : null}
 		</>
 	);
 };

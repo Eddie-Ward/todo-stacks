@@ -4,11 +4,12 @@ module.exports = {
 	theme: {
 		extend: {
 			colors: {
-				"t-light-blue": "#8ECAE6",
-				"t-med-blue": "#219EBC",
-				"t-dark-blue": "#023047",
-				"t-light-orange": "#FFB703",
-				"t-dark-orange": "#FB8500",
+				"th-blue-200": "#8ECAE6",
+				"th-blue-400": "#62B6DD",
+				"th-blue-500": "#219EBC",
+				"th-blue-900": "#023047",
+				"th-orange-500": "#FFB703",
+				"th-orange-700": "#FB8500",
 			},
 			fontFamily: {
 				cursive: ["'Atma'", "'cursive'"],

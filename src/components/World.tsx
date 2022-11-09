@@ -25,6 +25,7 @@ const World = () => {
 			<PerspectiveCamera makeDefault fov={65} />
 			<OrbitControls
 				makeDefault
+				enabled={!disableEvents}
 				enablePan={false}
 				minPolarAngle={Math.PI / 2.5}
 				maxPolarAngle={Math.PI / 2.5}

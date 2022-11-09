@@ -1,27 +1,23 @@
 import { Html } from "@react-three/drei";
 import React, { useMemo } from "react";
-import { type Todo } from "../../../../types.d";
+import { Priority, Duration, type Todo } from "../../../../types.d";
 import Exit from "../svg/Exit";
 import { useForm } from "react-hook-form";
 import Checkmark from "../svg/Checkmark";
 import Delete from "../svg/Delete";
 
-interface EditTodoModalProps {
-	setEditTodo: React.Dispatch<React.SetStateAction<number>>;
-	todo: Todo;
+interface NewTodoModalProps {
+	setNewTodo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
-	const formDefaultValues = useMemo(() => {
-		return {
-			id: todo.id,
-			priority: todo.priority,
-			duration: todo.duration,
-			title: todo.title,
-			body: todo.body,
-		};
-	}, [todo]);
+const newFormDefaultValues = {
+	priority: Priority,
+	duration: Duration,
+	title: "",
+	body: "",
+};
 
+const NewTodoModal = ({ setNewTodo }: NewTodoModalProps) => {
 	const {
 		register,
 		control,
@@ -30,7 +26,7 @@ const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 	} = useForm({
 		mode: "onChange",
 		reValidateMode: "onChange",
-		defaultValues: formDefaultValues,
+		defaultValues: newFormDefaultValues,
 	});
 
 	return (
@@ -48,12 +44,12 @@ const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 						className="btn-icon absolute top-0 right-0 translate-x-1/3 -translate-y-1/3"
 						onClick={(e) => {
 							e.stopPropagation();
-							setEditTodo(-1);
+							setNewTodo(false);
 						}}>
 						<Exit />
 					</button>
 					<h1 className="mb-6 font-cursive text-2xl font-bold text-th-blue-900">
-						Edit Todo
+						New Todo
 					</h1>
 					<form action="" className="mb-8 flex flex-col gap-6">
 						<div className="relative">
@@ -167,4 +163,4 @@ const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 	);
 };
 
-export default EditTodoModal;
+export default NewTodoModal;

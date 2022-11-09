@@ -21,11 +21,13 @@
     "next": "13.0.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.39.1",
     "superjson": "1.9.1",
     "three": "^0.146.0",
     "zod": "^3.18.0"
   },
   "devDependencies": {
+    "@hookform/devtools": "^4.2.3",
     "@types/node": "^18.0.0",
     "@types/react": "^18.0.14",
     "@types/react-dom": "^18.0.5",
