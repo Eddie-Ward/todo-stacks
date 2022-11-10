@@ -1,4 +1,4 @@
-import type { Todo, Stack } from "../../types";
+import type { Todo, Stack } from "../../types.d";
 
 export type TodoActionType =
 	| { type: "add_todo"; payload: Todo }
@@ -8,7 +8,7 @@ export const sortStack = (stack: Stack) => {
 	const res = { ...stack };
 	res.todos.sort((a, b) => {
 		if (a.priority === b.priority) {
-			return b.order - a.order;
+			return b.duration - a.duration;
 		}
 		return b.priority - a.priority;
 	});
@@ -25,7 +25,7 @@ export const todoReducer: React.Reducer<Stack, TodoActionType> = (
 			moreTodos.push(action.payload);
 			moreTodos.sort((a, b) => {
 				if (a.priority === b.priority) {
-					return b.order - a.order;
+					return b.duration - a.duration;
 				}
 				return b.priority - a.priority;
 			});
@@ -39,7 +39,7 @@ export const todoReducer: React.Reducer<Stack, TodoActionType> = (
 			);
 			lessTodos.sort((a, b) => {
 				if (a.priority === b.priority) {
-					return b.order - a.order;
+					return b.duration - a.duration;
 				}
 				return b.priority - a.priority;
 			});

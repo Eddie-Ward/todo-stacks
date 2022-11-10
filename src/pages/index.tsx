@@ -1,11 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-
 import { Canvas } from "@react-three/fiber";
 import World from "./../components/World";
-
-import { Loader } from "@react-three/drei";
-import { Suspense } from "react";
 
 const Home: NextPage = () => {
 	return (

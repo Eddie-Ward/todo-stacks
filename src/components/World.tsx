@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
 	OrbitControls,
 	PerspectiveCamera,
@@ -5,10 +6,7 @@ import {
 	ContactShadows,
 	Center,
 } from "@react-three/drei";
-import React, { useReducer, useState } from "react";
-import { stacks as initialStackIds } from "../utils/todos";
 import Stack from "./Stack";
-import { stackReducer } from "../shared/stackReducer";
 import { EventsContext } from "../shared/EventContext";
 import { trpc } from "../utils/trpc";
 
@@ -18,10 +16,9 @@ const positions: Array<[number, number]> = [
 ];
 
 const World = () => {
-	const [stackIds, dispatch] = useReducer(stackReducer, initialStackIds);
 	const [disableEvents, setDisableEvents] = useState(false);
 
-	const { data, error, isLoading } = trpc.stack.getAllStacksByUser.useQuery({
+	const { data } = trpc.stack.getAllStacksByUser.useQuery({
 		id: "636c453d40c8338a3270b102",
 	});
 

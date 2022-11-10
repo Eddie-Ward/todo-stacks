@@ -1,15 +1,7 @@
-import { Stack, Todo } from "@prisma/client";
+import { Stack, type Todo } from "@prisma/client";
 import { Html, useBounds } from "@react-three/drei";
-import React, {
-	useContext,
-	useEffect,
-	useMemo,
-	useReducer,
-	useState,
-} from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { EventsContext } from "../shared/EventContext";
-import { sortStack, todoReducer } from "../shared/todoReducer";
-import { todos as initialTodos } from "../utils/todos";
 import BaseTodoModal from "./design/modals/BaseTodoModal";
 import EditTodoModal from "./design/modals/EditTodoModal";
 import NewTodoModal from "./design/modals/NewTodoModal";

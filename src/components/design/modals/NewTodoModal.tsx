@@ -3,7 +3,6 @@ import { Html } from "@react-three/drei";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import Exit from "../svg/Exit";
 import Checkmark from "../svg/Checkmark";
-import Delete from "../svg/Delete";
 import { trpc } from "../../../utils/trpc";
 
 interface NewTodoModalProps {
