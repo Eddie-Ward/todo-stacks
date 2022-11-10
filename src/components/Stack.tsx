@@ -62,8 +62,10 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 				position={position}
 				dimension={dimension}
 				scale={1.5}
+				hue={data.hue}
 				visible={visible || baseModalOpen || editTodo !== -1}
-				length={data.Todo.length}>
+				length={data.Todo.length}
+				category={data.category}>
 				{data.Todo.length === 0 ? (
 					<Html
 						style={{ translate: "-50% -100%" }}
