@@ -7,11 +7,11 @@ export const todos: Stack[] = [
 		id: "chores_stack",
 		category: "Chores",
 		description: "The daily tasks",
+		hue: 30,
 		todos: [
 			{
 				id: "0",
 				stackId: "chores_stack",
-				order: 0,
 				priority: Priority.High,
 				duration: Duration.Medium,
 				title: "Groceries",
@@ -20,7 +20,6 @@ export const todos: Stack[] = [
 			{
 				id: "1",
 				stackId: "chores_stack",
-				order: 1,
 				priority: Priority.Medium,
 				duration: Duration.Long,
 				title: "Laundry",
@@ -29,7 +28,6 @@ export const todos: Stack[] = [
 			{
 				id: "2",
 				stackId: "chores_stack",
-				order: 2,
 				priority: Priority.Low,
 				duration: Duration.Medium,
 				title: "Clean bathroom",
@@ -38,7 +36,6 @@ export const todos: Stack[] = [
 			{
 				id: "3",
 				stackId: "chores_stack",
-				order: 3,
 				priority: Priority.Low,
 				duration: Duration.Long,
 				title: "Mow the lawn",
@@ -47,7 +44,6 @@ export const todos: Stack[] = [
 			{
 				id: "4",
 				stackId: "chores_stack",
-				order: 4,
 				priority: Priority.High,
 				duration: Duration.Fast,
 				title: "Pay rent",
@@ -59,11 +55,11 @@ export const todos: Stack[] = [
 		id: "dev_stack",
 		category: "Stack App",
 		description: "Features for stacks app",
+		hue: 50,
 		todos: [
 			{
 				id: "5",
 				stackId: "dev_stack",
-				order: 0,
 				priority: Priority.High,
 				duration: Duration.Long,
 				title: "3D Model of stacks",
@@ -72,7 +68,6 @@ export const todos: Stack[] = [
 			{
 				id: "6",
 				stackId: "dev_stack",
-				order: 1,
 				priority: Priority.High,
 				duration: Duration.Medium,
 				title: "Modal Popups",
@@ -81,7 +76,6 @@ export const todos: Stack[] = [
 			{
 				id: "7",
 				stackId: "dev_stack",
-				order: 2,
 				priority: Priority.Medium,
 				duration: Duration.VeryLong,
 				title: "Set up database",
@@ -90,7 +84,6 @@ export const todos: Stack[] = [
 			{
 				id: "8",
 				stackId: "dev_stack",
-				order: 3,
 				priority: Priority.Low,
 				duration: Duration.VeryLong,
 				title: "App styling",
@@ -99,7 +92,6 @@ export const todos: Stack[] = [
 			{
 				id: "9",
 				stackId: "dev_stack",
-				order: 4,
 				priority: Priority.Low,
 				duration: Duration.Long,
 				title: "Add auth",

@@ -16,13 +16,13 @@ export interface Stack {
 	id: string;
 	category: string;
 	description: string;
+	hue: number;
 	todos: Todo[];
 }
 
 export interface Todo {
 	id: string;
 	stackId: string;
-	order: number;
 	priority: Priority;
 	duration: Duration;
 	title: string;

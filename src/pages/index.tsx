@@ -4,12 +4,10 @@ import Head from "next/head";
 import { Canvas } from "@react-three/fiber";
 import World from "./../components/World";
 
-import { trpc } from "../utils/trpc";
 import { Loader } from "@react-three/drei";
 import { Suspense } from "react";
 
 const Home: NextPage = () => {
-	// const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
 	return (
 		<>
 			<Head>
@@ -22,11 +20,8 @@ const Home: NextPage = () => {
 						"linear-gradient(-225deg, #7DE2FC 0%, #B9B6E5 100%)",
 				}}>
 				<Canvas shadows={true} frameloop="demand">
-					<Suspense fallback={null}>
-						<World />
-					</Suspense>
+					<World />
 				</Canvas>
-				<Loader />
 			</main>
 		</>
 	);

@@ -1,5 +1,5 @@
-import { Edges, Plane } from "@react-three/drei";
 import React from "react";
+import { Edges, Plane } from "@react-three/drei";
 
 interface StackFloorProps {
 	position: [number, number];
@@ -7,6 +7,7 @@ interface StackFloorProps {
 	scale: number;
 	visible: boolean;
 	length: number;
+	children: React.ReactNode;
 }
 
 const StackFloor = ({
@@ -15,6 +16,7 @@ const StackFloor = ({
 	scale,
 	visible,
 	length,
+	children,
 }: StackFloorProps) => {
 	return (
 		<Plane
@@ -28,6 +30,7 @@ const StackFloor = ({
 				color="#FB8500"
 				opacity={0.5}
 			/>
+			{children}
 			<Edges color="#FB8500" />
 		</Plane>
 	);

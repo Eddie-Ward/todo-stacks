@@ -1,10 +1,11 @@
-import { Html } from "@react-three/drei";
 import React, { useMemo } from "react";
-import { type Todo } from "../../../../types.d";
+import { Html } from "@react-three/drei";
+import { type SubmitHandler, useForm } from "react-hook-form";
+import type { Todo } from "@prisma/client";
 import Exit from "../svg/Exit";
-import { useForm } from "react-hook-form";
 import Checkmark from "../svg/Checkmark";
 import Delete from "../svg/Delete";
+import { trpc } from "../../../utils/trpc";
 
 interface EditTodoModalProps {
 	setEditTodo: React.Dispatch<React.SetStateAction<number>>;
@@ -14,17 +15,15 @@ interface EditTodoModalProps {
 const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 	const formDefaultValues = useMemo(() => {
 		return {
-			id: todo.id,
-			priority: todo.priority,
-			duration: todo.duration,
-			title: todo.title,
-			body: todo.body,
+			title: todo?.title || "",
+			body: todo?.body || "",
+			priority: todo?.priority || 2,
+			duration: todo?.duration || 3,
 		};
 	}, [todo]);
 
 	const {
 		register,
-		control,
 		handleSubmit,
 		formState: { errors, isValid },
 	} = useForm({
@@ -32,6 +31,37 @@ const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 		reValidateMode: "onChange",
 		defaultValues: formDefaultValues,
 	});
+
+	const utils = trpc.useContext();
+	const editMutation = trpc.todo.editTodo.useMutation({
+		async onSuccess(data) {
+			console.log(data);
+			await utils.stack.getAllStacksByUser.invalidate();
+			setEditTodo(-1);
+		},
+	});
+	const deleteMutation = trpc.todo.deleteTodoById.useMutation({
+		async onSuccess(data) {
+			console.log(data);
+			await utils.stack.getAllStacksByUser.invalidate();
+			setEditTodo(-1);
+		},
+	});
+
+	const editTodo: SubmitHandler<typeof formDefaultValues> = (data) => {
+		editMutation.mutate({
+			todoId: todo.id,
+			title: data.title,
+			body: data.body,
+			priority: Number(data.priority),
+			duration: Number(data.duration),
+		});
+	};
+
+	const deleteTodo = () => {
+		console.log(todo.id);
+		deleteMutation.mutate({ id: todo.id });
+	};
 
 	return (
 		<Html
@@ -42,7 +72,7 @@ const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 					camera.position.z,
 				];
 			}}>
-			<div className="flex h-screen w-screen  items-center justify-center">
+			<div className="flex h-screen  w-screen items-center justify-center">
 				<div className="relative rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-6 text-left">
 					<button
 						className="btn-icon absolute top-0 right-0 translate-x-1/3 -translate-y-1/3"
@@ -55,7 +85,9 @@ const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 					<h1 className="mb-6 font-cursive text-2xl font-bold text-th-blue-900">
 						Edit Todo
 					</h1>
-					<form action="" className="mb-8 flex flex-col gap-6">
+					<form
+						onSubmit={handleSubmit(editTodo)}
+						className="mb-8 flex flex-col gap-6">
 						<div className="relative">
 							<label
 								htmlFor="title"
@@ -146,7 +178,10 @@ const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 							</div>
 						</div>
 						<div className="absolute right-0 bottom-0 flex translate-x-4 translate-y-1/3 justify-end gap-4">
-							<button className="btn-icon bg-red-500 hover:bg-red-600">
+							<button
+								type="button"
+								className="btn-icon bg-red-500 hover:bg-red-600"
+								onClick={deleteTodo}>
 								<Delete />
 							</button>
 							<button

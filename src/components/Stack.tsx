@@ -1,4 +1,5 @@
-import { useBounds } from "@react-three/drei";
+import { Stack, Todo } from "@prisma/client";
+import { Html, useBounds } from "@react-three/drei";
 import React, {
 	useContext,
 	useEffect,
@@ -6,13 +7,13 @@ import React, {
 	useReducer,
 	useState,
 } from "react";
-import { Stack } from "../../types.d";
 import { EventsContext } from "../shared/EventContext";
 import { sortStack, todoReducer } from "../shared/todoReducer";
 import { todos as initialTodos } from "../utils/todos";
 import BaseTodoModal from "./design/modals/BaseTodoModal";
 import EditTodoModal from "./design/modals/EditTodoModal";
 import NewTodoModal from "./design/modals/NewTodoModal";
+import Add from "./design/svg/Add";
 import StackFloor from "./StackFloor";
 import TodoBox from "./TodoBox";
 
@@ -20,25 +21,20 @@ interface StackProps {
 	position: [number, number];
 	dimension: [number, number];
 	heightScale: number;
-	stackId: string;
+	stack: Stack & { Todo: Todo[] };
 }
 
-const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
+const Stack = ({ position, dimension, heightScale, stack }: StackProps) => {
 	const bounds = useBounds();
-	const { setDisableEvents } = useContext(EventsContext);
+	const { disableEvents, setDisableEvents } = useContext(EventsContext);
 
 	const [visible, setVisible] = useState(false);
 	const [baseModalOpen, setBaseModalOpen] = useState(false);
-	const [editTodo, setEditTodo] = useState(-1);
 	const [newTodo, setNewTodo] = useState(false);
-
-	const [stack, dispatch] = useReducer(
-		todoReducer,
-		sortStack(initialTodos.find((stack) => stack.id === stackId) as Stack)
-	);
+	const [editTodo, setEditTodo] = useState(-1);
 
 	useEffect(() => {
-		if (baseModalOpen || editTodo !== -1) {
+		if (baseModalOpen || editTodo !== -1 || newTodo) {
 			setDisableEvents(true);
 		} else {
 			setDisableEvents(false);
@@ -47,18 +43,14 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 			setDisableEvents(false);
 			bounds.refresh().clip().fit();
 		};
-	}, [stack, bounds, editTodo, baseModalOpen, setDisableEvents]);
-
-	const randHue = useMemo(() => {
-		return Math.floor(Math.random() * (36 - 0) + 0) * 10;
-	}, []);
+	}, [stack, bounds, setDisableEvents, baseModalOpen, newTodo, editTodo]);
 
 	const heights = useMemo(() => {
 		let curHeight = 0;
 		let offsetY = 0;
 		const results = [];
-		for (let i = 0; i < stack.todos.length; i++) {
-			curHeight = stack.todos[i].duration * heightScale;
+		for (let i = 0; i < stack.Todo.length; i++) {
+			curHeight = stack.Todo[i].duration * heightScale;
 			results.push(offsetY + curHeight / 2);
 			offsetY += curHeight;
 		}
@@ -72,13 +64,26 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 				dimension={dimension}
 				scale={1.5}
 				visible={visible || baseModalOpen || editTodo !== -1}
-				length={stack.todos.length}
-			/>
-			{stack.todos.map((todo, index) => (
+				length={stack.Todo.length}>
+				{stack.Todo.length === 0 ? (
+					<Html
+						style={{ translate: "-50% -100%" }}
+						position={[0, 0, 0]}
+						zIndexRange={[100, 0]}>
+						<button
+							className="btn-icon scale-75 bg-green-500 hover:bg-green-600"
+							onClick={() => setNewTodo(true)}
+							disabled={disableEvents}>
+							<Add />
+						</button>
+					</Html>
+				) : null}
+			</StackFloor>
+			{stack.Todo.map((todo, index) => (
 				<TodoBox
 					key={todo.id}
 					index={index}
-					last={stack.todos.length - 1}
+					last={stack.Todo.length - 1}
 					position={[
 						position[0],
 						heights[index] + index * 0.01 + 0.02,
@@ -90,18 +95,14 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 						dimension[1],
 					]}
 					todo={todo}
-					hue={randHue}
+					hue={stack.hue}
 					setVisible={setVisible}
 					setBaseModal={setBaseModalOpen}
 					setEditTodo={setEditTodo}>
-					{index === stack.todos.length - 1 && baseModalOpen ? (
+					{index === stack.Todo.length - 1 && baseModalOpen ? (
 						<BaseTodoModal
-							id={todo.id}
+							todo={todo}
 							index={index}
-							title={todo.title}
-							body={todo.body}
-							duration={todo.duration}
-							dispatch={dispatch}
 							setEditTodo={setEditTodo}
 							setNewTodo={setNewTodo}
 						/>
@@ -110,11 +111,17 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 			))}
 			{editTodo !== -1 ? (
 				<EditTodoModal
+					todo={stack.Todo[editTodo]}
 					setEditTodo={setEditTodo}
-					todo={stack.todos[editTodo]}
 				/>
 			) : null}
-			{newTodo ? <NewTodoModal setNewTodo={setNewTodo} /> : null}
+			{newTodo ? (
+				<NewTodoModal
+					stackId={stack.id}
+					category={stack.category}
+					setNewTodo={setNewTodo}
+				/>
+			) : null}
 		</>
 	);
 };

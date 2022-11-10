@@ -1,42 +1,46 @@
+import type { Todo } from "@prisma/client";
 import { Html } from "@react-three/drei";
 import React from "react";
-import type { Duration } from "../../../../types";
-import { type TodoActionType } from "../../../shared/todoReducer";
+import { trpc } from "../../../utils/trpc";
 import Add from "../svg/Add";
 import Checkmark from "../svg/Checkmark";
 
 interface BaseTodoProps {
-	id: string;
+	todo: Todo;
 	index: number;
-	title: string;
-	body: string;
-	duration: Duration;
-	dispatch: React.Dispatch<TodoActionType>;
 	setEditTodo: React.Dispatch<React.SetStateAction<number>>;
 	setNewTodo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const BaseTodoModal = ({
-	id,
+	todo,
 	index,
-	title,
-	body,
-	duration,
-	dispatch,
 	setEditTodo,
 	setNewTodo,
 }: BaseTodoProps) => {
+	const utils = trpc.useContext();
+	const mutation = trpc.todo.deleteTodoById.useMutation({
+		async onSuccess(data) {
+			console.log(data);
+			await utils.stack.getAllStacksByUser.invalidate();
+		},
+	});
+
+	const handleDelete = () => {
+		mutation.mutate({ id: todo.id });
+	};
+
 	return (
 		<Html
 			as="div"
 			className="w-64 rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-4 text-left"
 			style={{ translate: "-50% -100%" }}
-			position={[0, duration * 0.125 + 0.25, 0]}>
+			position={[0, todo.duration * 0.125 + 0.25, 0]}>
 			<h1 className="mb-4 font-cursive text-2xl font-bold text-th-blue-900">
-				{title}
+				{todo.title}
 			</h1>
 			<p className="mb-4 font-cursive text-base font-medium text-th-blue-900">
-				{body}
+				{todo.body}
 			</p>
 			<button
 				className="rounded-lg bg-th-orange-500 py-1 px-4 font-cursive text-2xl text-white hover:bg-th-orange-700"
@@ -51,9 +55,7 @@ const BaseTodoModal = ({
 				</button>
 				<button
 					className="rounded-lg bg-th-orange-500 hover:bg-th-orange-700"
-					onClick={() =>
-						dispatch({ type: "remove_todo", payload: id })
-					}>
+					onClick={handleDelete}>
 					<Checkmark />
 				</button>
 			</div>

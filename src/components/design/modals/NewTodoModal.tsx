@@ -1,26 +1,27 @@
+import React from "react";
 import { Html } from "@react-three/drei";
-import React, { useMemo } from "react";
-import { Priority, Duration, type Todo } from "../../../../types.d";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import Exit from "../svg/Exit";
-import { useForm } from "react-hook-form";
 import Checkmark from "../svg/Checkmark";
 import Delete from "../svg/Delete";
+import { trpc } from "../../../utils/trpc";
 
 interface NewTodoModalProps {
+	stackId: string;
+	category: string;
 	setNewTodo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const newFormDefaultValues = {
-	priority: Priority,
-	duration: Duration,
 	title: "",
 	body: "",
+	priority: 2,
+	duration: 3,
 };
 
-const NewTodoModal = ({ setNewTodo }: NewTodoModalProps) => {
+const NewTodoModal = ({ stackId, category, setNewTodo }: NewTodoModalProps) => {
 	const {
 		register,
-		control,
 		handleSubmit,
 		formState: { errors, isValid },
 	} = useForm({
@@ -28,6 +29,26 @@ const NewTodoModal = ({ setNewTodo }: NewTodoModalProps) => {
 		reValidateMode: "onChange",
 		defaultValues: newFormDefaultValues,
 	});
+
+	const utils = trpc.useContext();
+	const mutation = trpc.todo.addNewTodo.useMutation({
+		async onSuccess(data) {
+			console.log(data);
+			await utils.stack.getAllStacksByUser.invalidate();
+			setNewTodo(false);
+		},
+	});
+	const createNewTodo: SubmitHandler<typeof newFormDefaultValues> = (
+		data
+	) => {
+		mutation.mutate({
+			stackId: stackId,
+			title: data.title,
+			body: data.body,
+			priority: Number(data.priority),
+			duration: Number(data.duration),
+		});
+	};
 
 	return (
 		<Html
@@ -48,10 +69,15 @@ const NewTodoModal = ({ setNewTodo }: NewTodoModalProps) => {
 						}}>
 						<Exit />
 					</button>
-					<h1 className="mb-6 font-cursive text-2xl font-bold text-th-blue-900">
+					<h1 className="mb-2 font-cursive text-2xl font-bold text-th-blue-900">
 						New Todo
 					</h1>
-					<form action="" className="mb-8 flex flex-col gap-6">
+					<p className="mb-6 font-cursive text-lg font-medium text-th-blue-900">
+						{category}
+					</p>
+					<form
+						onSubmit={handleSubmit(createNewTodo)}
+						className="mb-8 flex flex-col gap-6">
 						<div className="relative">
 							<label
 								htmlFor="title"
@@ -141,21 +167,16 @@ const NewTodoModal = ({ setNewTodo }: NewTodoModalProps) => {
 								</select>
 							</div>
 						</div>
-						<div className="absolute right-0 bottom-0 flex translate-x-4 translate-y-1/3 justify-end gap-4">
-							<button className="btn-icon bg-red-500 hover:bg-red-600">
-								<Delete />
-							</button>
-							<button
-								type="submit"
-								disabled={!isValid}
-								className={` rounded-lg ${
-									isValid
-										? "bg-th-orange-500 hover:bg-th-orange-700"
-										: "bg-gray-300"
-								} `}>
-								<Checkmark />
-							</button>
-						</div>
+						<button
+							type="submit"
+							disabled={!isValid}
+							className={`absolute right-0 bottom-0 translate-y-1/3 translate-x-4 rounded-lg ${
+								isValid
+									? "bg-th-orange-500 hover:bg-th-orange-700"
+									: "bg-gray-300"
+							} `}>
+							<Checkmark />
+						</button>
 					</form>
 				</div>
 			</div>
