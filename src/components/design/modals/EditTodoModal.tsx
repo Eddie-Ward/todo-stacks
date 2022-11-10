@@ -8,11 +8,18 @@ import Delete from "../svg/Delete";
 import { trpc } from "../../../utils/trpc";
 
 interface EditTodoModalProps {
-	setEditTodo: React.Dispatch<React.SetStateAction<number>>;
+	stackId: string;
 	todo: Todo;
+	category: string;
+	setEditTodo: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
+const EditTodoModal = ({
+	stackId,
+	todo,
+	category,
+	setEditTodo,
+}: EditTodoModalProps) => {
 	const formDefaultValues = useMemo(() => {
 		return {
 			title: todo?.title || "",
@@ -36,14 +43,14 @@ const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 	const editMutation = trpc.todo.editTodo.useMutation({
 		async onSuccess(data) {
 			console.log(data);
-			await utils.stack.getAllStacksByUser.invalidate();
+			await utils.stack.getStackById.invalidate({ stackId });
 			setEditTodo(-1);
 		},
 	});
-	const deleteMutation = trpc.todo.deleteTodoById.useMutation({
+	const deleteMutation = trpc.todo.deleteTodo.useMutation({
 		async onSuccess(data) {
 			console.log(data);
-			await utils.stack.getAllStacksByUser.invalidate();
+			await utils.stack.getStackById.invalidate({ stackId });
 			setEditTodo(-1);
 		},
 	});
@@ -60,7 +67,7 @@ const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 
 	const deleteTodo = () => {
 		console.log(todo.id);
-		deleteMutation.mutate({ id: todo.id });
+		deleteMutation.mutate({ todoId: todo.id });
 	};
 
 	return (
@@ -82,9 +89,12 @@ const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 						}}>
 						<Exit />
 					</button>
-					<h1 className="mb-6 font-cursive text-2xl font-bold text-th-blue-900">
+					<h1 className="mb-2 font-cursive text-2xl font-bold text-th-blue-900">
 						Edit Todo
 					</h1>
+					<p className="mb-6 font-cursive text-lg font-medium text-th-blue-900">
+						{category}
+					</p>
 					<form
 						onSubmit={handleSubmit(editTodo)}
 						className="mb-8 flex flex-col gap-6">

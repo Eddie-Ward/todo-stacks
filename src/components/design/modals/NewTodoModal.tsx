@@ -33,7 +33,7 @@ const NewTodoModal = ({ stackId, category, setNewTodo }: NewTodoModalProps) => {
 	const mutation = trpc.todo.addNewTodo.useMutation({
 		async onSuccess(data) {
 			console.log(data);
-			await utils.stack.getAllStacksByUser.invalidate();
+			await utils.stack.getStackById.invalidate({ stackId });
 			setNewTodo(false);
 		},
 	});

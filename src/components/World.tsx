@@ -18,9 +18,10 @@ const positions: Array<[number, number]> = [
 const World = () => {
 	const [disableEvents, setDisableEvents] = useState(false);
 
-	const { data } = trpc.stack.getAllStacksByUser.useQuery({
-		id: "636c453d40c8338a3270b102",
-	});
+	const { data } = trpc.stack.getAllStackIdsByUser.useQuery(
+		{ id: "636c453d40c8338a3270b102" },
+		{ refetchOnWindowFocus: false }
+	);
 
 	return (
 		<>
@@ -44,7 +45,7 @@ const World = () => {
 									position={positions[index]}
 									dimension={[1, 1]}
 									heightScale={0.25}
-									stack={stack}
+									stackId={stack.id}
 								/>
 							))}
 						</EventsContext.Provider>

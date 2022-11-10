@@ -1,7 +1,7 @@
-import { Stack, type Todo } from "@prisma/client";
 import { Html, useBounds } from "@react-three/drei";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { EventsContext } from "../shared/EventContext";
+import { trpc } from "../utils/trpc";
 import BaseTodoModal from "./design/modals/BaseTodoModal";
 import EditTodoModal from "./design/modals/EditTodoModal";
 import NewTodoModal from "./design/modals/NewTodoModal";
@@ -13,10 +13,15 @@ interface StackProps {
 	position: [number, number];
 	dimension: [number, number];
 	heightScale: number;
-	stack: Stack & { Todo: Todo[] };
+	stackId: string;
 }
 
-const Stack = ({ position, dimension, heightScale, stack }: StackProps) => {
+const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
+	const { data } = trpc.stack.getStackById.useQuery(
+		{ stackId },
+		{ refetchOnWindowFocus: false }
+	);
+
 	const bounds = useBounds();
 	const { disableEvents, setDisableEvents } = useContext(EventsContext);
 
@@ -35,29 +40,31 @@ const Stack = ({ position, dimension, heightScale, stack }: StackProps) => {
 			setDisableEvents(false);
 			bounds.refresh().clip().fit();
 		};
-	}, [stack, bounds, setDisableEvents, baseModalOpen, newTodo, editTodo]);
+	}, [bounds, setDisableEvents, baseModalOpen, newTodo, editTodo]);
 
 	const heights = useMemo(() => {
 		let curHeight = 0;
 		let offsetY = 0;
 		const results = [];
-		for (let i = 0; i < stack.Todo.length; i++) {
-			curHeight = stack.Todo[i].duration * heightScale;
-			results.push(offsetY + curHeight / 2);
-			offsetY += curHeight;
+		if (data) {
+			for (let i = 0; i < data.Todo.length; i++) {
+				curHeight = data.Todo[i].duration * heightScale;
+				results.push(offsetY + curHeight / 2);
+				offsetY += curHeight;
+			}
 		}
 		return results;
-	}, [stack, heightScale]);
+	}, [data, heightScale]);
 
-	return (
+	return data ? (
 		<>
 			<StackFloor
 				position={position}
 				dimension={dimension}
 				scale={1.5}
 				visible={visible || baseModalOpen || editTodo !== -1}
-				length={stack.Todo.length}>
-				{stack.Todo.length === 0 ? (
+				length={data.Todo.length}>
+				{data.Todo.length === 0 ? (
 					<Html
 						style={{ translate: "-50% -100%" }}
 						position={[0, 0, 0]}
@@ -71,11 +78,11 @@ const Stack = ({ position, dimension, heightScale, stack }: StackProps) => {
 					</Html>
 				) : null}
 			</StackFloor>
-			{stack.Todo.map((todo, index) => (
+			{data.Todo.map((todo, index) => (
 				<TodoBox
 					key={todo.id}
 					index={index}
-					last={stack.Todo.length - 1}
+					last={data.Todo.length - 1}
 					position={[
 						position[0],
 						heights[index] + index * 0.01 + 0.02,
@@ -87,13 +94,15 @@ const Stack = ({ position, dimension, heightScale, stack }: StackProps) => {
 						dimension[1],
 					]}
 					todo={todo}
-					hue={stack.hue}
+					hue={data.hue}
 					setVisible={setVisible}
 					setBaseModal={setBaseModalOpen}
 					setEditTodo={setEditTodo}>
-					{index === stack.Todo.length - 1 && baseModalOpen ? (
+					{index === data.Todo.length - 1 && baseModalOpen ? (
 						<BaseTodoModal
+							stackId={stackId}
 							todo={todo}
+							category={data.category}
 							index={index}
 							setEditTodo={setEditTodo}
 							setNewTodo={setNewTodo}
@@ -103,19 +112,21 @@ const Stack = ({ position, dimension, heightScale, stack }: StackProps) => {
 			))}
 			{editTodo !== -1 ? (
 				<EditTodoModal
-					todo={stack.Todo[editTodo]}
+					stackId={stackId}
+					todo={data.Todo[editTodo]}
+					category={data.category}
 					setEditTodo={setEditTodo}
 				/>
 			) : null}
 			{newTodo ? (
 				<NewTodoModal
-					stackId={stack.id}
-					category={stack.category}
+					stackId={stackId}
+					category={data.category}
 					setNewTodo={setNewTodo}
 				/>
 			) : null}
 		</>
-	);
+	) : null;
 };
 
 export default Stack;
