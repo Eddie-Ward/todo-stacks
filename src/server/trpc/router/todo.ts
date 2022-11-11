@@ -3,14 +3,21 @@ import { z } from "zod";
 import { router, publicProcedure } from "../trpc";
 
 export const todoRouter = router({
-	deleteTodoById: publicProcedure
-		.input(z.object({ id: z.string() }))
-		.mutation(async ({ ctx, input }) => {
-			const deletedTodo = await ctx.prisma.todo.delete({
-				where: { id: input.id },
-			});
-			return deletedTodo;
-		}),
+	// getTodoById: publicProcedure
+	// 	.input(
+	// 		z.object({
+	// 			todoId: z.string(),
+	// 		})
+	// 	)
+	// 	.query(async ({ ctx, input }) => {
+	// 		const todo = await ctx.prisma.todo.findUnique({
+	// 			where: {
+	// 				stackId: input.stackId,
+	// 			},
+	// 		});
+	// 		return todos;
+	// 	}),
+
 	addNewTodo: publicProcedure
 		.input(
 			z.object({
@@ -56,4 +63,12 @@ export const todoRouter = router({
 				return editedTodo;
 			}
 		),
+	deleteTodo: publicProcedure
+		.input(z.object({ todoId: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const deletedTodo = await ctx.prisma.todo.delete({
+				where: { id: input.todoId },
+			});
+			return deletedTodo;
+		}),
 });

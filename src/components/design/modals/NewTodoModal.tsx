@@ -9,6 +9,7 @@ interface NewTodoModalProps {
 	stackId: string;
 	category: string;
 	setNewTodo: React.Dispatch<React.SetStateAction<boolean>>;
+	setEditStack: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const newFormDefaultValues = {
@@ -18,7 +19,12 @@ const newFormDefaultValues = {
 	duration: 3,
 };
 
-const NewTodoModal = ({ stackId, category, setNewTodo }: NewTodoModalProps) => {
+const NewTodoModal = ({
+	stackId,
+	category,
+	setNewTodo,
+	setEditStack,
+}: NewTodoModalProps) => {
 	const {
 		register,
 		handleSubmit,
@@ -33,7 +39,7 @@ const NewTodoModal = ({ stackId, category, setNewTodo }: NewTodoModalProps) => {
 	const mutation = trpc.todo.addNewTodo.useMutation({
 		async onSuccess(data) {
 			console.log(data);
-			await utils.stack.getAllStacksByUser.invalidate();
+			await utils.stack.getStackById.invalidate({ stackId });
 			setNewTodo(false);
 		},
 	});
@@ -166,6 +172,16 @@ const NewTodoModal = ({ stackId, category, setNewTodo }: NewTodoModalProps) => {
 								</select>
 							</div>
 						</div>
+						<button
+							type="button"
+							className="w-32 rounded-lg bg-th-orange-500 py-1 px-4 font-cursive text-2xl text-white hover:bg-th-orange-700"
+							onClick={(e) => {
+								e.stopPropagation();
+								setEditStack(true);
+								setNewTodo(false);
+							}}>
+							Edit Stack
+						</button>
 						<button
 							type="submit"
 							disabled={!isValid}

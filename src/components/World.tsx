@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
 	OrbitControls,
 	PerspectiveCamera,
@@ -6,21 +6,15 @@ import {
 	ContactShadows,
 	Center,
 } from "@react-three/drei";
-import Stack from "./Stack";
+import WorldStack from "./WorldStack";
 import { EventsContext } from "../shared/EventContext";
-import { trpc } from "../utils/trpc";
-
-const positions: Array<[number, number]> = [
-	[1, 1],
-	[-1, 1],
-];
+import { UserContext } from "../shared/UserContext";
 
 const World = () => {
+	const userId = useMemo(() => {
+		return "636c453d40c8338a3270b102";
+	}, []);
 	const [disableEvents, setDisableEvents] = useState(false);
-
-	const { data } = trpc.stack.getAllStacksByUser.useQuery({
-		id: "636c453d40c8338a3270b102",
-	});
 
 	return (
 		<>
@@ -33,24 +27,21 @@ const World = () => {
 				maxPolarAngle={Math.PI / 2.5}
 			/>
 			<pointLight position={[10, 10, 10]} />
-			{data ? (
-				<Bounds fit clip observe damping={0.5} margin={2.25}>
-					<Center disableY>
+			<Bounds
+				fit
+				clip
+				observe
+				damping={0.5}
+				margin={window.innerWidth < 600 ? 1.3 : 2.25}>
+				<Center disableY>
+					<UserContext.Provider value={userId}>
 						<EventsContext.Provider
 							value={{ disableEvents, setDisableEvents }}>
-							{data.Stack.map((stack, index) => (
-								<Stack
-									key={stack.id}
-									position={positions[index]}
-									dimension={[1, 1]}
-									heightScale={0.25}
-									stack={stack}
-								/>
-							))}
+							<WorldStack />
 						</EventsContext.Provider>
-					</Center>
-				</Bounds>
-			) : null}
+					</UserContext.Provider>
+				</Center>
+			</Bounds>
 			<ContactShadows
 				position={[0, -0.1, 0]}
 				scale={20}

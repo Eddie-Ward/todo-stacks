@@ -2,17 +2,26 @@ import React, { useMemo } from "react";
 import { Html } from "@react-three/drei";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import type { Todo } from "@prisma/client";
+import { trpc } from "../../../utils/trpc";
 import Exit from "../svg/Exit";
 import Checkmark from "../svg/Checkmark";
 import Delete from "../svg/Delete";
-import { trpc } from "../../../utils/trpc";
 
 interface EditTodoModalProps {
-	setEditTodo: React.Dispatch<React.SetStateAction<number>>;
+	stackId: string;
 	todo: Todo;
+	category: string;
+	setEditTodo: React.Dispatch<React.SetStateAction<number>>;
+	setEditStack: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
+const EditTodoModal = ({
+	stackId,
+	todo,
+	category,
+	setEditTodo,
+	setEditStack,
+}: EditTodoModalProps) => {
 	const formDefaultValues = useMemo(() => {
 		return {
 			title: todo?.title || "",
@@ -36,14 +45,14 @@ const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 	const editMutation = trpc.todo.editTodo.useMutation({
 		async onSuccess(data) {
 			console.log(data);
-			await utils.stack.getAllStacksByUser.invalidate();
+			await utils.stack.getStackById.invalidate({ stackId });
 			setEditTodo(-1);
 		},
 	});
-	const deleteMutation = trpc.todo.deleteTodoById.useMutation({
+	const deleteMutation = trpc.todo.deleteTodo.useMutation({
 		async onSuccess(data) {
 			console.log(data);
-			await utils.stack.getAllStacksByUser.invalidate();
+			await utils.stack.getStackById.invalidate({ stackId });
 			setEditTodo(-1);
 		},
 	});
@@ -60,7 +69,7 @@ const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 
 	const deleteTodo = () => {
 		console.log(todo.id);
-		deleteMutation.mutate({ id: todo.id });
+		deleteMutation.mutate({ todoId: todo.id });
 	};
 
 	return (
@@ -82,12 +91,15 @@ const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 						}}>
 						<Exit />
 					</button>
-					<h1 className="mb-6 font-cursive text-2xl font-bold text-th-blue-900">
+					<h1 className="mb-2 font-cursive text-2xl font-bold text-th-blue-900">
 						Edit Todo
 					</h1>
+					<p className="mb-6 font-cursive text-lg font-medium text-th-blue-900">
+						{category}
+					</p>
 					<form
 						onSubmit={handleSubmit(editTodo)}
-						className="mb-8 flex flex-col gap-6">
+						className="mb-4 flex flex-col gap-6">
 						<div className="relative">
 							<label
 								htmlFor="title"
@@ -122,6 +134,7 @@ const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 							</label>
 							<textarea
 								id="body"
+								rows={5}
 								{...register("body", {
 									maxLength: {
 										value: 250,
@@ -177,11 +190,24 @@ const EditTodoModal = ({ setEditTodo, todo }: EditTodoModalProps) => {
 								</select>
 							</div>
 						</div>
+						<button
+							type="button"
+							className="w-32 rounded-lg bg-th-orange-500 py-1 px-4 font-cursive text-2xl text-white hover:bg-th-orange-700"
+							onClick={(e) => {
+								e.stopPropagation();
+								setEditStack(true);
+								setEditTodo(-1);
+							}}>
+							Edit Stack
+						</button>
 						<div className="absolute right-0 bottom-0 flex translate-x-4 translate-y-1/3 justify-end gap-4">
 							<button
 								type="button"
 								className="btn-icon bg-red-500 hover:bg-red-600"
-								onClick={deleteTodo}>
+								onClick={(e) => {
+									e.stopPropagation();
+									deleteTodo();
+								}}>
 								<Delete />
 							</button>
 							<button
