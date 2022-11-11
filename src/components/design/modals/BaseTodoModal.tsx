@@ -39,7 +39,7 @@ const BaseTodoModal = ({
 	return (
 		<Html
 			as="div"
-			className="relative w-48 rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-4 text-left sm:w-64"
+			className="relative w-52 rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-4 text-left sm:w-64"
 			style={{ translate: "-50% -100%" }}
 			position={[0, todo.duration * 0.125 + 0.25, 0]}>
 			<header className="mb-4 flex items-end justify-between">
@@ -50,7 +50,7 @@ const BaseTodoModal = ({
 					{category}
 				</p>
 			</header>
-			<div className="mb-6 max-h-32 break-words font-cursive text-lg font-medium text-th-blue-900 sm:h-20">
+			<div className="mb-6 max-h-32 break-words font-cursive text-lg font-medium text-th-blue-900 sm:max-h-20">
 				{todo.body.length > 100
 					? todo.body.slice(0, 98) + "..."
 					: todo.body}

@@ -117,6 +117,8 @@ const NewTodoModal = ({
 							</label>
 							<textarea
 								id="body"
+								rows={5}
+								cols={20}
 								{...register("body", {
 									maxLength: {
 										value: 250,
@@ -150,7 +152,7 @@ const NewTodoModal = ({
 							</div>
 							<div className="relative">
 								<label
-									htmlFor="priority"
+									htmlFor="duration"
 									className={`absolute top-0 left-0 translate-x-2 -translate-y-4 font-cursive text-xl font-semibold ${
 										errors.duration
 											? "text-red-600"
@@ -159,7 +161,7 @@ const NewTodoModal = ({
 									{errors.duration?.message || "Duration"}
 								</label>
 								<select
-									id="priority"
+									id="duration"
 									{...register("duration", {
 										required: "Required",
 									})}
