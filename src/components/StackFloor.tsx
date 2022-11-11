@@ -1,5 +1,7 @@
-import React from "react";
-import { Edges, Html, Plane } from "@react-three/drei";
+import React, { useContext, useState } from "react";
+import { Edges, Plane } from "@react-three/drei";
+import { EventsContext } from "../shared/EventContext";
+import BaseStackInfoModal from "./design/modals/BaseStackInfoModal";
 
 interface StackFloorProps {
 	position: [number, number];
@@ -9,7 +11,9 @@ interface StackFloorProps {
 	visible: boolean;
 	length: number;
 	category?: string;
-	children: React.ReactNode;
+	setNewTodo?: React.Dispatch<React.SetStateAction<boolean>>;
+	setNewStack?: React.Dispatch<React.SetStateAction<boolean>>;
+	children?: React.ReactNode;
 }
 
 const StackFloor = ({
@@ -20,28 +24,57 @@ const StackFloor = ({
 	visible,
 	length,
 	category,
+	setNewTodo,
+	setNewStack,
 	children,
 }: StackFloorProps) => {
+	const { disableEvents } = useContext(EventsContext);
+	const [hovered, setHovered] = useState(false);
+
 	return (
 		<Plane
 			position={[position[0], 0.01, position[1]]}
 			args={dimension}
 			scale={scale}
 			rotation={[-Math.PI / 2, 0, 0]}
-			visible={length > 0 ? visible : true}>
+			visible={length > 0 ? visible : true}
+			onClick={(e) => {
+				e.stopPropagation();
+				if (!disableEvents && length == 0) {
+					if (setNewTodo) {
+						setNewTodo(true);
+						setHovered(false);
+					} else if (setNewStack) {
+						setNewStack(true);
+						setHovered(false);
+					}
+				}
+			}}
+			onPointerEnter={(e) => {
+				e.stopPropagation();
+				if (!disableEvents && length == 0) {
+					setHovered(true);
+				}
+			}}
+			onPointerLeave={(e) => {
+				e.stopPropagation();
+				if (!disableEvents && length == 0) {
+					setHovered(false);
+				}
+			}}>
 			<meshBasicMaterial
+				color={`hsl(${hue}, ${category ? "60%" : "25%"}, 50%)`}
+				opacity={hovered ? 0.8 : category ? 0.5 : 0.2}
 				transparent={true}
-				color={`hsl(${hue}, 70%, 50%)`}
-				opacity={0.5}
 			/>
 			{children}
 			<Edges color={`hsl(${hue}, 70%, 50%)`} />
-			{category ? (
-				<Html transform zIndexRange={[100, 0]}>
-					<h1 className="pointer-events-none translate-y-11 text-left font-cursive text-sm font-medium text-th-orange-700">
-						{category}
-					</h1>
-				</Html>
+			{length === 0 ? (
+				<BaseStackInfoModal
+					visible={hovered}
+					category={category}
+					length={length}
+				/>
 			) : null}
 		</Plane>
 	);

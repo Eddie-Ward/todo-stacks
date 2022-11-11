@@ -12,7 +12,7 @@ interface BoxProps extends MeshProps {
 	todo: Todo;
 	hue: number;
 	setVisible: React.Dispatch<React.SetStateAction<boolean>>;
-	setBaseModal: React.Dispatch<React.SetStateAction<boolean>>;
+	setBaseTodo: React.Dispatch<React.SetStateAction<boolean>>;
 	setEditTodo: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -24,7 +24,7 @@ const TodoBox = ({
 	todo,
 	hue,
 	setVisible,
-	setBaseModal,
+	setBaseTodo,
 	setEditTodo,
 	children,
 }: BoxProps) => {
@@ -51,7 +51,7 @@ const TodoBox = ({
 				e.stopPropagation();
 				if (!disableEvents) {
 					if (index === last) {
-						setBaseModal(true);
+						setBaseTodo(true);
 					} else {
 						setEditTodo(index);
 					}
@@ -60,7 +60,7 @@ const TodoBox = ({
 			}}
 			onPointerMissed={(e) => {
 				e.stopPropagation();
-				setBaseModal(false);
+				setBaseTodo(false);
 				setHovered(false);
 				setVisible(false);
 			}}
@@ -84,7 +84,7 @@ const TodoBox = ({
 					selected
 						? "#FB8500"
 						: hovered && !disableEvents
-						? "hotpink"
+						? "#FFB703"
 						: `hsl(${hue}, 70%, ${todo.priority * 9 + 55}%)`
 				}
 			/>

@@ -55,4 +55,53 @@ export const stackRouter = router({
 			}
 			return stack;
 		}),
+	addNewStack: publicProcedure
+		.input(
+			z.object({
+				userId: z.string(),
+				category: z.string().min(1).max(20),
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const hue = Math.floor(Math.random() * (36 - 0) + 0) * 10;
+			const newStack = await ctx.prisma.stack.create({
+				data: {
+					...input,
+					hue,
+				},
+			});
+			return newStack;
+		}),
+	editStack: publicProcedure
+		.input(
+			z.object({
+				stackId: z.string(),
+				category: z.string().min(1).max(20),
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const editedStack = await ctx.prisma.stack.update({
+				where: {
+					id: input.stackId,
+				},
+				data: {
+					category: input.category,
+				},
+			});
+			return editedStack;
+		}),
+	deleteStack: publicProcedure
+		.input(
+			z.object({
+				stackId: z.string(),
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const deletedStack = await ctx.prisma.stack.delete({
+				where: {
+					id: input.stackId,
+				},
+			});
+			return deletedStack;
+		}),
 });

@@ -2,16 +2,17 @@ import React, { useMemo } from "react";
 import { Html } from "@react-three/drei";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import type { Todo } from "@prisma/client";
+import { trpc } from "../../../utils/trpc";
 import Exit from "../svg/Exit";
 import Checkmark from "../svg/Checkmark";
 import Delete from "../svg/Delete";
-import { trpc } from "../../../utils/trpc";
 
 interface EditTodoModalProps {
 	stackId: string;
 	todo: Todo;
 	category: string;
 	setEditTodo: React.Dispatch<React.SetStateAction<number>>;
+	setEditStack: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const EditTodoModal = ({
@@ -19,6 +20,7 @@ const EditTodoModal = ({
 	todo,
 	category,
 	setEditTodo,
+	setEditStack,
 }: EditTodoModalProps) => {
 	const formDefaultValues = useMemo(() => {
 		return {
@@ -97,7 +99,7 @@ const EditTodoModal = ({
 					</p>
 					<form
 						onSubmit={handleSubmit(editTodo)}
-						className="mb-8 flex flex-col gap-6">
+						className="mb-4 flex flex-col gap-6">
 						<div className="relative">
 							<label
 								htmlFor="title"
@@ -132,6 +134,7 @@ const EditTodoModal = ({
 							</label>
 							<textarea
 								id="body"
+								rows={5}
 								{...register("body", {
 									maxLength: {
 										value: 250,
@@ -187,11 +190,24 @@ const EditTodoModal = ({
 								</select>
 							</div>
 						</div>
+						<button
+							type="button"
+							className="w-32 rounded-lg bg-th-orange-500 py-1 px-4 font-cursive text-2xl text-white hover:bg-th-orange-700"
+							onClick={(e) => {
+								e.stopPropagation();
+								setEditStack(true);
+								setEditTodo(-1);
+							}}>
+							Edit Stack
+						</button>
 						<div className="absolute right-0 bottom-0 flex translate-x-4 translate-y-1/3 justify-end gap-4">
 							<button
 								type="button"
 								className="btn-icon bg-red-500 hover:bg-red-600"
-								onClick={deleteTodo}>
+								onClick={(e) => {
+									e.stopPropagation();
+									deleteTodo();
+								}}>
 								<Delete />
 							</button>
 							<button

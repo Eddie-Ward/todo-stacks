@@ -1,13 +1,14 @@
-import { Html, useBounds } from "@react-three/drei";
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { EventsContext } from "../shared/EventContext";
-import { trpc } from "../utils/trpc";
+import { useBounds } from "@react-three/drei";
+import BaseStackInfoModal from "./design/modals/BaseStackInfoModal";
 import BaseTodoModal from "./design/modals/BaseTodoModal";
-import EditTodoModal from "./design/modals/EditTodoModal";
 import NewTodoModal from "./design/modals/NewTodoModal";
-import Add from "./design/svg/Add";
+import EditTodoModal from "./design/modals/EditTodoModal";
+import EditStackModal from "./design/modals/EditStackModal";
 import StackFloor from "./StackFloor";
 import TodoBox from "./TodoBox";
+import { EventsContext } from "../shared/EventContext";
+import { trpc } from "../utils/trpc";
 
 interface StackProps {
 	position: [number, number];
@@ -23,15 +24,15 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 	);
 
 	const bounds = useBounds();
-	const { disableEvents, setDisableEvents } = useContext(EventsContext);
-
+	const { setDisableEvents } = useContext(EventsContext);
 	const [visible, setVisible] = useState(false);
-	const [baseModalOpen, setBaseModalOpen] = useState(false);
+	const [baseTodo, setBaseTodo] = useState(false);
 	const [newTodo, setNewTodo] = useState(false);
 	const [editTodo, setEditTodo] = useState(-1);
+	const [editStack, setEditStack] = useState(false);
 
 	useEffect(() => {
-		if (baseModalOpen || editTodo !== -1 || newTodo) {
+		if (baseTodo || editTodo !== -1 || newTodo || editStack) {
 			setDisableEvents(true);
 		} else {
 			setDisableEvents(false);
@@ -40,7 +41,7 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 			setDisableEvents(false);
 			bounds.refresh().clip().fit();
 		};
-	}, [bounds, setDisableEvents, baseModalOpen, newTodo, editTodo]);
+	}, [bounds, setDisableEvents, baseTodo, newTodo, editTodo, editStack]);
 
 	const heights = useMemo(() => {
 		let curHeight = 0;
@@ -63,23 +64,11 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 				dimension={dimension}
 				scale={1.5}
 				hue={data.hue}
-				visible={visible || baseModalOpen || editTodo !== -1}
+				visible={visible || baseTodo || editTodo !== -1}
 				length={data.Todo.length}
-				category={data.category}>
-				{data.Todo.length === 0 ? (
-					<Html
-						style={{ translate: "-50% -100%" }}
-						position={[0, 0, 0]}
-						zIndexRange={[100, 0]}>
-						<button
-							className="btn-icon scale-75 bg-green-500 hover:bg-green-600"
-							onClick={() => setNewTodo(true)}
-							disabled={disableEvents}>
-							<Add />
-						</button>
-					</Html>
-				) : null}
-			</StackFloor>
+				category={data.category}
+				setNewTodo={setNewTodo}
+			/>
 			{data.Todo.map((todo, index) => (
 				<TodoBox
 					key={todo.id}
@@ -98,33 +87,52 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 					todo={todo}
 					hue={data.hue}
 					setVisible={setVisible}
-					setBaseModal={setBaseModalOpen}
+					setBaseTodo={setBaseTodo}
 					setEditTodo={setEditTodo}>
-					{index === data.Todo.length - 1 && baseModalOpen ? (
-						<BaseTodoModal
-							stackId={stackId}
-							todo={todo}
-							category={data.category}
-							index={index}
-							setEditTodo={setEditTodo}
-							setNewTodo={setNewTodo}
-						/>
+					{index === data.Todo.length - 1 ? (
+						<>
+							{baseTodo ? (
+								<BaseTodoModal
+									stackId={stackId}
+									todo={todo}
+									category={data.category}
+									index={index}
+									setBaseTodo={setBaseTodo}
+									setNewTodo={setNewTodo}
+									setEditTodo={setEditTodo}
+								/>
+							) : null}
+							<BaseStackInfoModal
+								visible={visible}
+								category={data.category}
+								length={data.Todo.length}
+							/>
+						</>
 					) : null}
 				</TodoBox>
 			))}
+			{newTodo ? (
+				<NewTodoModal
+					stackId={stackId}
+					category={data.category}
+					setNewTodo={setNewTodo}
+					setEditStack={setEditStack}
+				/>
+			) : null}
 			{editTodo !== -1 ? (
 				<EditTodoModal
 					stackId={stackId}
 					todo={data.Todo[editTodo]}
 					category={data.category}
 					setEditTodo={setEditTodo}
+					setEditStack={setEditStack}
 				/>
 			) : null}
-			{newTodo ? (
-				<NewTodoModal
+			{editStack ? (
+				<EditStackModal
 					stackId={stackId}
 					category={data.category}
-					setNewTodo={setNewTodo}
+					setEditStack={setEditStack}
 				/>
 			) : null}
 		</>
