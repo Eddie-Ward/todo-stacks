@@ -15,7 +15,6 @@ const World = () => {
 		return "636c453d40c8338a3270b102";
 	}, []);
 	const [disableEvents, setDisableEvents] = useState(false);
-
 	return (
 		<>
 			<PerspectiveCamera makeDefault fov={65} />
@@ -31,8 +30,8 @@ const World = () => {
 				fit
 				clip
 				observe
-				damping={0.5}
-				margin={window.innerWidth < 600 ? 1.3 : 2.25}>
+				damping={0.75}
+				margin={window.innerWidth < 600 ? 1.75 : 2.25}>
 				<Center disableY>
 					<UserContext.Provider value={userId}>
 						<EventsContext.Provider

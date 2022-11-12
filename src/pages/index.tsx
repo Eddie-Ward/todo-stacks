@@ -2,6 +2,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { Canvas } from "@react-three/fiber";
 import World from "./../components/World";
+import { t } from "../utils/tunnel";
 
 const Home: NextPage = () => {
 	return (
@@ -18,6 +19,7 @@ const Home: NextPage = () => {
 				<Canvas shadows={true} frameloop="demand">
 					<World />
 				</Canvas>
+				<t.Out />
 			</main>
 		</>
 	);

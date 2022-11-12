@@ -24,6 +24,7 @@
     "react-hook-form": "^7.39.1",
     "superjson": "1.9.1",
     "three": "^0.146.0",
+    "tunnel-rat": "^0.1.0",
     "zod": "^3.18.0"
   },
   "devDependencies": {

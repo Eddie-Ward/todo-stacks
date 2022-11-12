@@ -5,6 +5,7 @@ import StackFloor from "./StackFloor";
 import NewStackModal from "./design/modals/NewStackModal";
 import { UserContext } from "../shared/UserContext";
 import { trpc } from "../utils/trpc";
+import { t } from "../utils/tunnel";
 
 const DIMENSIONS: [number, number] = [1.5, 1.5];
 const SPACING = 2;
@@ -55,7 +56,9 @@ const WorldStack = () => {
 					setNewStack={setNewStack}
 				/>
 			) : null}
-			{newStack ? <NewStackModal setNewStack={setNewStack} /> : null}
+			<t.In>
+				{newStack ? <NewStackModal setNewStack={setNewStack} /> : null}
+			</t.In>
 		</>
 	) : (
 		<Html position={[0, 0, 0]}>
