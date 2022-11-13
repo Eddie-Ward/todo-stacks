@@ -1,9 +1,8 @@
-import React, { useContext, useEffect } from "react";
+import React from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
+import { trpc } from "../../../utils/trpc";
 import Exit from "../svg/Exit";
 import Checkmark from "../svg/Checkmark";
-import { trpc } from "../../../utils/trpc";
-import { EventsContext } from "../../../shared/EventContext";
 
 interface NewTodoModalProps {
 	stackId: string;

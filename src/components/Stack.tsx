@@ -141,6 +141,8 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 					<EditStackModal
 						stackId={stackId}
 						category={data.category}
+						priorityAsc={data.priorityAsc}
+						durationAsc={data.durationAsc}
 						setEditStack={setEditStack}
 					/>
 				) : null}

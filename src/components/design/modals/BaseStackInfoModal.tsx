@@ -1,6 +1,5 @@
+import React from "react";
 import { Html } from "@react-three/drei";
-import React, { useContext, useEffect } from "react";
-import { EventsContext } from "../../../shared/EventContext";
 
 interface StackInfoProps {
 	visible: boolean;

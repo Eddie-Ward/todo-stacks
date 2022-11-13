@@ -38,13 +38,7 @@ export const stackRouter = router({
 					id: input.stackId,
 				},
 				include: {
-					Todo: {
-						orderBy: [
-							{ priority: "desc" },
-							{ duration: "desc" },
-							{ updatedAt: "desc" },
-						],
-					},
+					Todo: true,
 				},
 			});
 			if (!stack) {
@@ -53,7 +47,21 @@ export const stackRouter = router({
 					code: "NOT_FOUND",
 				});
 			}
-			return stack;
+			const sortStack = { ...stack };
+			sortStack.Todo.sort((a, b) => {
+				if (a.priority === b.priority) {
+					if (a.duration === b.duration) {
+						return a.updatedAt.getTime() - b.updatedAt.getTime();
+					}
+					return sortStack.durationAsc
+						? a.duration - b.duration
+						: b.duration - a.duration;
+				}
+				return sortStack.priorityAsc
+					? a.priority - b.priority
+					: b.priority - a.priority;
+			});
+			return sortStack;
 		}),
 	addNewStack: publicProcedure
 		.input(
@@ -77,6 +85,8 @@ export const stackRouter = router({
 			z.object({
 				stackId: z.string(),
 				category: z.string().min(1).max(20),
+				priorityAsc: z.boolean(),
+				durationAsc: z.boolean(),
 			})
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -86,6 +96,8 @@ export const stackRouter = router({
 				},
 				data: {
 					category: input.category,
+					priorityAsc: input.priorityAsc,
+					durationAsc: input.durationAsc,
 				},
 			});
 			return editedStack;

@@ -1,30 +1,39 @@
-import React, { useContext, useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { trpc } from "../../../utils/trpc";
 import Checkmark from "../svg/Checkmark";
 import Delete from "../svg/Delete";
 import Exit from "../svg/Exit";
-import { EventsContext } from "../../../shared/EventContext";
+import Descending from "../svg/Descending";
+import Ascending from "../svg/Ascending";
 
 interface EditStackModalProps {
 	stackId: string;
 	category: string;
+	priorityAsc: boolean;
+	durationAsc: boolean;
 	setEditStack: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const EditStackModal = ({
 	stackId,
 	category,
+	priorityAsc,
+	durationAsc,
 	setEditStack,
 }: EditStackModalProps) => {
 	const formDefaultValues = useMemo(() => {
 		return {
 			category: category ?? "",
+			priorityAsc: priorityAsc ? 1 : 0,
+			durationAsc: durationAsc ? 1 : 0,
 		};
-	}, [category]);
+	}, [category, priorityAsc, durationAsc]);
 
 	const {
 		register,
+		watch,
+		setValue,
 		handleSubmit,
 		formState: { errors, isValid },
 	} = useForm({
@@ -32,6 +41,9 @@ const EditStackModal = ({
 		reValidateMode: "onChange",
 		defaultValues: formDefaultValues,
 	});
+
+	const prioritySort = watch("priorityAsc");
+	const durationSort = watch("durationAsc");
 
 	const utils = trpc.useContext();
 	const editMutation = trpc.stack.editStack.useMutation({
@@ -53,6 +65,8 @@ const EditStackModal = ({
 		editMutation.mutate({
 			stackId,
 			category: data.category,
+			priorityAsc: !!data.priorityAsc,
+			durationAsc: !!data.durationAsc,
 		});
 	};
 
@@ -103,6 +117,56 @@ const EditStackModal = ({
 							className="input-text w-full"
 						/>
 					</div>
+					<div className="flex justify-between gap-3">
+						<div className="flex items-center">
+							<span className="mr-1 font-cursive text-xl font-semibold text-th-orange-700">
+								Priority:
+							</span>
+							<button
+								type="button"
+								className="btn-icon scale-75"
+								{...register("priorityAsc", {
+									valueAsNumber: true,
+								})}
+								onClick={(e) => {
+									e.stopPropagation();
+									setValue(
+										"priorityAsc",
+										prioritySort === 0 ? 1 : 0,
+										{
+											shouldDirty: true,
+											shouldTouch: true,
+										}
+									);
+								}}>
+								{prioritySort ? <Ascending /> : <Descending />}
+							</button>
+						</div>
+						<div className="flex items-center">
+							<span className="mr-1 font-cursive text-xl font-semibold text-th-orange-700">
+								Duration:
+							</span>
+							<button
+								type="button"
+								className="btn-icon scale-75"
+								{...register("durationAsc", {
+									valueAsNumber: true,
+								})}
+								onClick={(e) => {
+									e.stopPropagation();
+									setValue(
+										"durationAsc",
+										durationSort === 0 ? 1 : 0,
+										{
+											shouldDirty: true,
+											shouldTouch: true,
+										}
+									);
+								}}>
+								{durationSort ? <Ascending /> : <Descending />}
+							</button>
+						</div>
+					</div>
 					<div className="absolute right-0 bottom-0 flex translate-x-4 translate-y-1/3 justify-end gap-4">
 						<button
 							type="button"
@@ -116,7 +180,7 @@ const EditStackModal = ({
 						<button
 							type="submit"
 							disabled={!isValid}
-							className={` rounded-lg ${
+							className={`rounded-lg ${
 								isValid
 									? "bg-th-orange-500 hover:bg-th-orange-700"
 									: "bg-gray-300"

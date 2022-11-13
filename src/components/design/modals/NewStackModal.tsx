@@ -1,10 +1,9 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { UserContext } from "../../../shared/UserContext";
 import { trpc } from "../../../utils/trpc";
 import Checkmark from "../svg/Checkmark";
 import Exit from "../svg/Exit";
-import { EventsContext } from "../../../shared/EventContext";
 
 interface NewStackModalProps {
 	setNewStack: React.Dispatch<React.SetStateAction<boolean>>;

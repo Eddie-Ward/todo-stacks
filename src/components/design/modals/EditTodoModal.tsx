@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import type { Todo } from "@prisma/client";
 import { trpc } from "../../../utils/trpc";
 import Exit from "../svg/Exit";
 import Checkmark from "../svg/Checkmark";
 import Delete from "../svg/Delete";
-import { EventsContext } from "../../../shared/EventContext";
 
 interface EditTodoModalProps {
 	stackId: string;
