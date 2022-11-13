@@ -52,9 +52,6 @@ const BaseTodoModal = ({
 			</header>
 			<div className="mb-6 max-h-36 overflow-y-auto break-normal font-cursive text-lg font-medium text-th-blue-900">
 				{todo.body}
-				{/* {todo.body.length > 100
-					? todo.body.slice(0, 98) + "..."
-					: todo.body} */}
 			</div>
 			<button
 				className="rounded-lg bg-th-orange-500 py-1 px-4 font-cursive text-2xl text-white hover:bg-th-orange-700"
@@ -79,8 +76,8 @@ const BaseTodoModal = ({
 					className="scale-75 rounded-lg bg-th-orange-500 hover:bg-th-orange-700 sm:scale-100"
 					onClick={(e) => {
 						e.stopPropagation();
-						handleDelete();
 						setBaseTodo(false);
+						handleDelete();
 					}}>
 					<Checkmark />
 				</button>

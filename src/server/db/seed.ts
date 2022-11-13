@@ -2,6 +2,8 @@ export const createTutorialStack = (userId: string) => ({
 	userId,
 	category: "Tutorial",
 	hue: 25,
+	priorityAsc: false,
+	durationAsc: false,
 });
 
 export const createTutorialTodos = (stackId: string) => [

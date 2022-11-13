@@ -45,18 +45,17 @@ const EditTodoModal = ({
 		async onSuccess(data) {
 			console.log(data);
 			await utils.stack.getStackById.invalidate({ stackId });
-			setEditTodo(-1);
 		},
 	});
 	const deleteMutation = trpc.todo.deleteTodo.useMutation({
 		async onSuccess(data) {
 			console.log(data);
 			await utils.stack.getStackById.invalidate({ stackId });
-			setEditTodo(-1);
 		},
 	});
 
 	const editTodo: SubmitHandler<typeof formDefaultValues> = (data) => {
+		setEditTodo(-1);
 		editMutation.mutate({
 			todoId: todo.id,
 			title: data.title,
@@ -67,7 +66,7 @@ const EditTodoModal = ({
 	};
 
 	const deleteTodo = () => {
-		console.log(todo.id);
+		setEditTodo(-1);
 		deleteMutation.mutate({ todoId: todo.id });
 	};
 

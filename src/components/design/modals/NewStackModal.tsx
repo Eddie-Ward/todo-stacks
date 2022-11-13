@@ -23,6 +23,7 @@ const NewStackModal = ({ setNewStack }: NewStackModalProps) => {
 	});
 
 	const userId = useContext(UserContext);
+	console.log(userId);
 	const utils = trpc.useContext();
 	const newMutation = trpc.stack.addNewStack.useMutation({
 		async onSuccess(data) {
@@ -33,6 +34,7 @@ const NewStackModal = ({ setNewStack }: NewStackModalProps) => {
 	});
 
 	const newStack: SubmitHandler<typeof formDefaultValues> = (data) => {
+		console.log(userId);
 		newMutation.mutate({
 			userId,
 			category: data.category,
