@@ -49,12 +49,22 @@ const EditStackModal = ({
 	const editMutation = trpc.stack.editStack.useMutation({
 		async onSuccess() {
 			await utils.stack.getStackById.invalidate({ stackId });
+		},
+		async onError(error) {
+			console.error(error);
+		},
+		async onSettled() {
 			setEditStack(false);
 		},
 	});
 	const deleteMutation = trpc.stack.deleteStack.useMutation({
 		async onSuccess() {
 			await utils.stack.getAllStackIdsByUser.invalidate();
+		},
+		async onError(error) {
+			console.error(error);
+		},
+		async onSettled() {
 			setEditStack(false);
 		},
 	});
@@ -168,7 +178,16 @@ const EditStackModal = ({
 					<div className="absolute right-0 bottom-0 flex translate-x-4 translate-y-1/3 justify-end gap-4">
 						<button
 							type="button"
-							className="btn-icon bg-red-500 hover:bg-red-600"
+							disabled={
+								editMutation.isLoading ||
+								deleteMutation.isLoading
+							}
+							className={`btn-icon ${
+								!editMutation.isLoading &&
+								!deleteMutation.isLoading
+									? "bg-red-500 hover:bg-red-600"
+									: "bg-gray-300"
+							}`}
 							onClick={(e) => {
 								e.stopPropagation();
 								deleteStack();
@@ -177,9 +196,15 @@ const EditStackModal = ({
 						</button>
 						<button
 							type="submit"
-							disabled={!isValid}
+							disabled={
+								!isValid ||
+								editMutation.isLoading ||
+								deleteMutation.isLoading
+							}
 							className={`rounded-lg ${
-								isValid
+								isValid &&
+								!editMutation.isLoading &&
+								!deleteMutation.isLoading
 									? "bg-th-orange-500 hover:bg-th-orange-700"
 									: "bg-gray-300"
 							} `}>

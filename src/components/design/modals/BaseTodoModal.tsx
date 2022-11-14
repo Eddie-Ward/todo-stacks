@@ -26,9 +26,14 @@ const BaseTodoModal = ({
 }: BaseTodoProps) => {
 	const utils = trpc.useContext();
 	const mutation = trpc.todo.deleteTodo.useMutation({
-		async onSuccess(data) {
-			console.log(data);
+		async onSuccess() {
 			await utils.stack.getStackById.invalidate({ stackId });
+		},
+		async onError(error) {
+			console.error(error);
+		},
+		async onSettled() {
+			setBaseTodo(false);
 		},
 	});
 
@@ -38,7 +43,7 @@ const BaseTodoModal = ({
 	return (
 		<Html
 			as="div"
-			className="relative w-56 rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-4 text-left sm:w-64"
+			className="relative w-56 rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-3 text-left sm:w-64 sm:p-4"
 			style={{ translate: "-50% -100%" }}
 			position={[0, todo.duration * 0.125 + 0.25, 0]}>
 			<header>
@@ -50,7 +55,7 @@ const BaseTodoModal = ({
 				</p>
 			</header>
 			<p
-				className="mb-5 max-h-40 py-1 font-cursive text-lg font-medium text-th-blue-900"
+				className="mb-5 max-h-32 py-1 font-cursive text-lg font-medium text-th-blue-900 sm:max-h-40"
 				style={{
 					wordBreak: "break-word",
 					whiteSpace: "normal",
@@ -59,31 +64,45 @@ const BaseTodoModal = ({
 				{todo.body}
 			</p>
 			<button
-				className="rounded-lg bg-th-orange-500 py-1 px-4 font-cursive text-2xl text-white hover:bg-th-orange-700"
+				className={`rounded-lg  py-1 px-4 font-cursive text-2xl text-white  ${
+					!mutation.isLoading
+						? "bg-th-orange-500 hover:bg-th-orange-700"
+						: "bg-gray-300"
+				}`}
 				onClick={(e) => {
 					e.stopPropagation();
 					setEditTodo(index);
 					setBaseTodo(false);
-				}}>
+				}}
+				disabled={mutation.isLoading}>
 				Edit
 			</button>
 			<div className="absolute right-0 bottom-0 flex translate-x-4 translate-y-1/3 justify-end gap-0.5 sm:gap-4">
 				<button
-					className="btn-icon scale-75 bg-green-500 hover:bg-green-600 sm:scale-100"
+					className={`btn-icon scale-75 sm:scale-100 ${
+						!mutation.isLoading
+							? "bg-green-500 hover:bg-green-600"
+							: "bg-gray-300"
+					}`}
 					onClick={(e) => {
 						e.stopPropagation();
 						setNewTodo(true);
 						setBaseTodo(false);
-					}}>
+					}}
+					disabled={mutation.isLoading}>
 					<Add />
 				</button>
 				<button
-					className="scale-75 rounded-lg bg-th-orange-500 hover:bg-th-orange-700 sm:scale-100"
+					className={`scale-75 rounded-lg sm:scale-100 ${
+						!mutation.isLoading
+							? "bg-th-orange-500 hover:bg-th-orange-700"
+							: "bg-gray-300"
+					}`}
 					onClick={(e) => {
 						e.stopPropagation();
-						setBaseTodo(false);
 						handleDelete();
-					}}>
+					}}
+					disabled={mutation.isLoading}>
 					<Checkmark />
 				</button>
 			</div>

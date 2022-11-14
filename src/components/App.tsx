@@ -4,6 +4,7 @@ import World from "./../components/World";
 import { t } from "../utils/tunnel";
 import { trpc } from "../utils/trpc";
 import { UserContext } from "../shared/UserContext";
+import LoadingModal from "./design/modals/LoadingModal";
 
 const App = () => {
 	const userMutation = trpc.user.createNewUser.useMutation();
@@ -64,6 +65,7 @@ const App = () => {
 					</p>
 				</section>
 			)}
+			<LoadingModal />
 		</>
 	);
 };

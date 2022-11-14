@@ -23,18 +23,20 @@ const NewStackModal = ({ setNewStack }: NewStackModalProps) => {
 	});
 
 	const userId = useContext(UserContext);
-	console.log(userId);
 	const utils = trpc.useContext();
 	const newMutation = trpc.stack.addNewStack.useMutation({
-		async onSuccess(data) {
-			console.log(data);
+		async onSuccess() {
 			await utils.stack.getAllStackIdsByUser.invalidate();
+		},
+		async onError(error) {
+			console.error(error);
+		},
+		async onSettled() {
 			setNewStack(false);
 		},
 	});
 
 	const newStack: SubmitHandler<typeof formDefaultValues> = (data) => {
-		console.log(userId);
 		newMutation.mutate({
 			userId,
 			category: data.category,
@@ -86,9 +88,9 @@ const NewStackModal = ({ setNewStack }: NewStackModalProps) => {
 					</div>
 					<button
 						type="submit"
-						disabled={!isValid}
+						disabled={!isValid || newMutation.isLoading}
 						className={`absolute right-0 bottom-0 translate-y-1/3 translate-x-4 rounded-lg ${
-							isValid
+							isValid && !newMutation.isLoading
 								? "bg-th-orange-500 hover:bg-th-orange-700"
 								: "bg-gray-300"
 						} `}>

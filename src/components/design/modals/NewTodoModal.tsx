@@ -35,17 +35,21 @@ const NewTodoModal = ({
 	});
 
 	const utils = trpc.useContext();
-	const mutation = trpc.todo.addNewTodo.useMutation({
-		async onSuccess(data) {
-			console.log(data);
+	const addMutation = trpc.todo.addNewTodo.useMutation({
+		async onSuccess() {
 			await utils.stack.getStackById.invalidate({ stackId });
+		},
+		async onError(error) {
+			console.error(error);
+		},
+		async onSettled() {
 			setNewTodo(false);
 		},
 	});
 	const createNewTodo: SubmitHandler<typeof newFormDefaultValues> = (
 		data
 	) => {
-		mutation.mutate({
+		addMutation.mutate({
 			stackId: stackId,
 			title: data.title,
 			body: data.body,
@@ -56,7 +60,7 @@ const NewTodoModal = ({
 
 	return (
 		<div className="absolute top-0 left-0 z-10 flex h-screen  w-screen items-center justify-center">
-			<div className="relative rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-6 text-left">
+			<div className="relative w-72 rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-4 text-left sm:w-80 sm:p-6">
 				<button
 					className="btn-icon absolute top-0 right-0 translate-x-1/3 -translate-y-1/3"
 					onClick={(e) => {
@@ -109,18 +113,17 @@ const NewTodoModal = ({
 						<textarea
 							id="body"
 							rows={5}
-							cols={20}
 							{...register("body", {
 								maxLength: {
 									value: 250,
 									message: "Please enter a shorter body",
 								},
 							})}
-							className="input-text"
+							className="input-text w-full"
 						/>
 					</div>
-					<div className="flex justify-between">
-						<div className="relative">
+					<div className="flex justify-between gap-8">
+						<div className="relative grow">
 							<label
 								htmlFor="priority"
 								className={`absolute top-0 left-0 translate-x-2 -translate-y-4 font-cursive text-xl font-semibold ${
@@ -135,13 +138,13 @@ const NewTodoModal = ({
 								{...register("priority", {
 									required: "Required",
 								})}
-								className="input-select">
+								className="input-select w-full">
 								<option label="High" value={1} />
 								<option label="Medium" value={2} />
 								<option label="Low" value={3} />
 							</select>
 						</div>
-						<div className="relative">
+						<div className="relative grow">
 							<label
 								htmlFor="duration"
 								className={`absolute top-0 left-0 translate-x-2 -translate-y-4 font-cursive text-xl font-semibold ${
@@ -156,7 +159,7 @@ const NewTodoModal = ({
 								{...register("duration", {
 									required: "Required",
 								})}
-								className="input-select">
+								className="input-select w-full">
 								<option label="Fast" value={1} />
 								<option label="Short" value={2} />
 								<option label="Medium" value={3} />
@@ -167,7 +170,12 @@ const NewTodoModal = ({
 					</div>
 					<button
 						type="button"
-						className="w-32 rounded-lg bg-th-orange-500 py-1 px-4 font-cursive text-2xl text-white hover:bg-th-orange-700"
+						disabled={addMutation.isLoading}
+						className={`w-32 rounded-lg py-1 px-4 font-cursive text-2xl text-white ${
+							!addMutation.isLoading
+								? "bg-th-orange-500 hover:bg-th-orange-700"
+								: "bg-gray-300"
+						}`}
 						onClick={(e) => {
 							e.stopPropagation();
 							setEditStack(true);
@@ -177,9 +185,9 @@ const NewTodoModal = ({
 					</button>
 					<button
 						type="submit"
-						disabled={!isValid}
+						disabled={!isValid || addMutation.isLoading}
 						className={`absolute right-0 bottom-0 translate-y-1/3 translate-x-4 rounded-lg ${
-							isValid
+							isValid && !addMutation.isLoading
 								? "bg-th-orange-500 hover:bg-th-orange-700"
 								: "bg-gray-300"
 						} `}>

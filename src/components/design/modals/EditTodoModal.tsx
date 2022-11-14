@@ -42,20 +42,30 @@ const EditTodoModal = ({
 
 	const utils = trpc.useContext();
 	const editMutation = trpc.todo.editTodo.useMutation({
-		async onSuccess(data) {
-			console.log(data);
+		async onSuccess() {
 			await utils.stack.getStackById.invalidate({ stackId });
+			setEditTodo(-1);
+		},
+		async onError(error) {
+			console.error(error);
+		},
+		async onSettled() {
+			setEditTodo(-1);
 		},
 	});
 	const deleteMutation = trpc.todo.deleteTodo.useMutation({
-		async onSuccess(data) {
-			console.log(data);
+		async onSuccess() {
 			await utils.stack.getStackById.invalidate({ stackId });
+		},
+		async onError(error) {
+			console.error(error);
+		},
+		async onSettled() {
+			setEditTodo(-1);
 		},
 	});
 
 	const editTodo: SubmitHandler<typeof formDefaultValues> = (data) => {
-		setEditTodo(-1);
 		editMutation.mutate({
 			todoId: todo.id,
 			title: data.title,
@@ -66,13 +76,12 @@ const EditTodoModal = ({
 	};
 
 	const deleteTodo = () => {
-		setEditTodo(-1);
 		deleteMutation.mutate({ todoId: todo.id });
 	};
 
 	return (
 		<div className="absolute top-0 left-0 z-10 flex h-screen w-screen items-center justify-center">
-			<div className="relative rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-4 text-left sm:p-6">
+			<div className="relative w-72 rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-4 text-left sm:w-80 sm:p-6">
 				<button
 					className="btn-icon absolute top-0 right-0 translate-x-1/3 -translate-y-1/3"
 					onClick={(e) => {
@@ -125,18 +134,17 @@ const EditTodoModal = ({
 						<textarea
 							id="body"
 							rows={5}
-							cols={20}
 							{...register("body", {
 								maxLength: {
 									value: 250,
 									message: "Please enter a shorter body",
 								},
 							})}
-							className="input-text"
+							className="input-text w-full"
 						/>
 					</div>
-					<div className="flex justify-between">
-						<div className="relative">
+					<div className="flex justify-between gap-8">
+						<div className="relative grow">
 							<label
 								htmlFor="priority"
 								className={`absolute top-0 left-0 translate-x-2 -translate-y-4 font-cursive text-xl font-semibold ${
@@ -151,13 +159,13 @@ const EditTodoModal = ({
 								{...register("priority", {
 									required: "Required",
 								})}
-								className="input-select">
+								className="input-select w-full">
 								<option label="High" value={1} />
 								<option label="Medium" value={2} />
 								<option label="Low" value={3} />
 							</select>
 						</div>
-						<div className="relative">
+						<div className="relative grow">
 							<label
 								htmlFor="duration"
 								className={`absolute top-0 left-0 translate-x-2 -translate-y-4 font-cursive text-xl font-semibold ${
@@ -172,7 +180,7 @@ const EditTodoModal = ({
 								{...register("duration", {
 									required: "Required",
 								})}
-								className="input-select">
+								className="input-select w-full">
 								<option label="Fast" value={1} />
 								<option label="Short" value={2} />
 								<option label="Medium" value={3} />
@@ -188,13 +196,25 @@ const EditTodoModal = ({
 							e.stopPropagation();
 							setEditStack(true);
 							setEditTodo(-1);
-						}}>
+						}}
+						disabled={
+							editMutation.isLoading || deleteMutation.isLoading
+						}>
 						Edit Stack
 					</button>
 					<div className="absolute right-0 bottom-0 flex translate-x-4 translate-y-1/3 justify-end gap-4">
 						<button
 							type="button"
-							className="btn-icon bg-red-500 hover:bg-red-600"
+							disabled={
+								editMutation.isLoading ||
+								deleteMutation.isLoading
+							}
+							className={`btn-icon ${
+								!editMutation.isLoading &&
+								!deleteMutation.isLoading
+									? "bg-red-500 hover:bg-red-600"
+									: "bg-gray-300"
+							}`}
 							onClick={(e) => {
 								e.stopPropagation();
 								deleteTodo();
@@ -203,9 +223,15 @@ const EditTodoModal = ({
 						</button>
 						<button
 							type="submit"
-							disabled={!isValid}
-							className={` rounded-lg ${
-								isValid
+							disabled={
+								!isValid ||
+								editMutation.isLoading ||
+								deleteMutation.isLoading
+							}
+							className={`rounded-lg ${
+								isValid &&
+								!editMutation.isLoading &&
+								!deleteMutation.isLoading
 									? "bg-th-orange-500 hover:bg-th-orange-700"
 									: "bg-gray-300"
 							} `}>
