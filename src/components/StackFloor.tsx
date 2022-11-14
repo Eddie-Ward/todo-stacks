@@ -63,15 +63,14 @@ const StackFloor = ({
 				}
 			}}>
 			<meshBasicMaterial
-				color={`hsl(${hue}, ${category ? "60%" : "25%"}, 50%)`}
-				// opacity={hovered ? 0.8 : category ? 0.5 : 0.2}
+				color={`hsl(${hue}, ${category ? "50%" : "25%"}, 50%)`}
 				opacity={
 					category
 						? hovered || visible
-							? 0.8
+							? 0.6
 							: 0.5
 						: hovered
-						? 0.8
+						? 0.6
 						: 0.2
 				}
 				transparent={true}

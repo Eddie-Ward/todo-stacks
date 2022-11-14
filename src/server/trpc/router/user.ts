@@ -11,18 +11,14 @@ export const userRouter = router({
 			const user = await ctx.prisma.user.create({
 				data: {},
 			});
-			// const tutorialStack = createTutorialStack(user.id);
-			// const stack = await ctx.prisma.stack.create({
-			// 	data: {
-			// 		...tutorialStack,
-			// 	},
-			// });
-			// const tutorialTodos = createTutorialTodos(stack.id);
-			// const todos = await ctx.prisma.todo.createMany({
-			// 	data: {
-			// 		...tutorialTodos,
-			// 	},
-			// });
+			const tutorialStack = createTutorialStack(user.id);
+			const stack = await ctx.prisma.stack.create({
+				data: tutorialStack,
+			});
+			const tutorialTodos = createTutorialTodos(stack.id);
+			const todos = await ctx.prisma.todo.createMany({
+				data: tutorialTodos,
+			});
 			return { userId: user.id };
 		}),
 });

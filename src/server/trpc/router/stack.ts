@@ -67,7 +67,7 @@ export const stackRouter = router({
 		.input(
 			z.object({
 				userId: z.string(),
-				category: z.string().min(1).max(20),
+				category: z.string().min(1).max(25),
 			})
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -84,7 +84,7 @@ export const stackRouter = router({
 		.input(
 			z.object({
 				stackId: z.string(),
-				category: z.string().min(1).max(20),
+				category: z.string().min(1).max(25),
 				priorityAsc: z.boolean(),
 				durationAsc: z.boolean(),
 			})

@@ -35,7 +35,6 @@ const BaseTodoModal = ({
 	const handleDelete = () => {
 		mutation.mutate({ todoId: todo.id });
 	};
-
 	return (
 		<Html
 			as="div"
@@ -43,16 +42,22 @@ const BaseTodoModal = ({
 			style={{ translate: "-50% -100%" }}
 			position={[0, todo.duration * 0.125 + 0.25, 0]}>
 			<header>
-				<h1 className="mb-2 font-cursive text-xl font-bold text-th-blue-900">
+				<h1 className="mb-2 font-cursive text-2xl font-bold text-th-blue-900">
 					{todo.title}
 				</h1>
-				<p className="mb-4 font-cursive text-lg font-medium text-th-orange-700">
+				<p className="mb-3 font-cursive text-lg font-semibold text-th-orange-700">
 					{category}
 				</p>
 			</header>
-			<div className="mb-6 max-h-36 overflow-y-auto break-normal font-cursive text-lg font-medium text-th-blue-900">
+			<p
+				className="mb-5 max-h-40 py-1 font-cursive text-lg font-medium text-th-blue-900"
+				style={{
+					wordBreak: "break-word",
+					whiteSpace: "normal",
+					overflow: "auto",
+				}}>
 				{todo.body}
-			</div>
+			</p>
 			<button
 				className="rounded-lg bg-th-orange-500 py-1 px-4 font-cursive text-2xl text-white hover:bg-th-orange-700"
 				onClick={(e) => {

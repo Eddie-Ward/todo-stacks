@@ -26,8 +26,10 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 
 	const bounds = useBounds();
 	const { setDisableEvents } = useContext(EventsContext);
+
 	const [visible, setVisible] = useState(false);
 	const [baseTodo, setBaseTodo] = useState(false);
+
 	const [newTodo, setNewTodo] = useState(false);
 	const [editTodo, setEditTodo] = useState(-1);
 	const [editStack, setEditStack] = useState(false);

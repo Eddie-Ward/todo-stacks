@@ -11,7 +11,7 @@ export const createTutorialTodos = (stackId: string) => [
 		stackId,
 		priority: 1,
 		duration: 2,
-		title: "Welcome to the TodoStacks!",
+		title: "Welcome to TodoStacks!",
 		body: "This stack is meant to guide you through using the app. Click the checkmark to mark this as complete, then click the next block.",
 	},
 	{

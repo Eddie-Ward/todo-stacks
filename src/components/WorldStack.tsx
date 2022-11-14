@@ -2,6 +2,7 @@ import React, { useContext, useMemo, useState } from "react";
 import Stack from "./Stack";
 import StackFloor from "./StackFloor";
 import NewStackModal from "./design/modals/NewStackModal";
+import NewUserModal from "./design/modals/NewUserModal";
 import { UserContext } from "../shared/UserContext";
 import { trpc } from "../utils/trpc";
 import { t } from "../utils/tunnel";
@@ -18,6 +19,7 @@ const WorldStack = () => {
 		{ refetchOnWindowFocus: false }
 	);
 	const [newStack, setNewStack] = useState(false);
+	const [newUserModal, setNewUserModal] = useState(true);
 
 	const positions = useMemo(() => {
 		const stacks = data?.Stack ?? [];
@@ -57,6 +59,9 @@ const WorldStack = () => {
 			) : null}
 			<t.In>
 				{newStack ? <NewStackModal setNewStack={setNewStack} /> : null}
+				{newUserModal ? (
+					<NewUserModal setNewUserModal={setNewUserModal} />
+				) : null}
 			</t.In>
 		</>
 	) : (
