@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import type { MeshProps } from "@react-three/fiber";
-import type { Todo } from "../../types.d";
 import { RoundedBox, useTexture } from "@react-three/drei";
 import { EventsContext } from "../shared/EventContext";
+import type { Todo } from "../../types.d";
 
 interface BoxProps extends MeshProps {
 	index: number;

@@ -1,10 +1,10 @@
 import { router } from "../trpc";
-import { exampleRouter } from "./example";
 import { stackRouter } from "./stack";
 import { todoRouter } from "./todo";
+import { userRouter } from "./user";
 
 export const appRouter = router({
-	example: exampleRouter,
+	user: userRouter,
 	stack: stackRouter,
 	todo: todoRouter,
 });

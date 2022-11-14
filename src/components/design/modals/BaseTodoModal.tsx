@@ -35,26 +35,29 @@ const BaseTodoModal = ({
 	const handleDelete = () => {
 		mutation.mutate({ todoId: todo.id });
 	};
-
 	return (
 		<Html
 			as="div"
-			className="relative w-48 rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-4 text-left sm:w-64"
+			className="relative w-56 rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-4 text-left sm:w-64"
 			style={{ translate: "-50% -100%" }}
 			position={[0, todo.duration * 0.125 + 0.25, 0]}>
-			<header className="mb-4 flex items-end justify-between">
-				<h1 className="font-cursive text-2xl font-bold text-th-blue-900">
+			<header>
+				<h1 className="mb-2 font-cursive text-2xl font-bold text-th-blue-900">
 					{todo.title}
 				</h1>
-				<p className="font-cursive text-lg font-medium text-th-orange-700">
+				<p className="mb-3 font-cursive text-lg font-semibold text-th-orange-700">
 					{category}
 				</p>
 			</header>
-			<div className="mb-6 max-h-32 break-words font-cursive text-lg font-medium text-th-blue-900 sm:h-20">
-				{todo.body.length > 100
-					? todo.body.slice(0, 98) + "..."
-					: todo.body}
-			</div>
+			<p
+				className="mb-5 max-h-40 py-1 font-cursive text-lg font-medium text-th-blue-900"
+				style={{
+					wordBreak: "break-word",
+					whiteSpace: "normal",
+					overflow: "auto",
+				}}>
+				{todo.body}
+			</p>
 			<button
 				className="rounded-lg bg-th-orange-500 py-1 px-4 font-cursive text-2xl text-white hover:bg-th-orange-700"
 				onClick={(e) => {
@@ -78,8 +81,8 @@ const BaseTodoModal = ({
 					className="scale-75 rounded-lg bg-th-orange-500 hover:bg-th-orange-700 sm:scale-100"
 					onClick={(e) => {
 						e.stopPropagation();
-						handleDelete();
 						setBaseTodo(false);
+						handleDelete();
 					}}>
 					<Checkmark />
 				</button>

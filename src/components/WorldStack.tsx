@@ -1,10 +1,11 @@
 import React, { useContext, useMemo, useState } from "react";
-import { Html } from "@react-three/drei";
 import Stack from "./Stack";
 import StackFloor from "./StackFloor";
 import NewStackModal from "./design/modals/NewStackModal";
+import NewUserModal from "./design/modals/NewUserModal";
 import { UserContext } from "../shared/UserContext";
 import { trpc } from "../utils/trpc";
+import { t } from "../utils/tunnel";
 
 const DIMENSIONS: [number, number] = [1.5, 1.5];
 const SPACING = 2;
@@ -18,6 +19,7 @@ const WorldStack = () => {
 		{ refetchOnWindowFocus: false }
 	);
 	const [newStack, setNewStack] = useState(false);
+	const [newUserModal, setNewUserModal] = useState(true);
 
 	const positions = useMemo(() => {
 		const stacks = data?.Stack ?? [];
@@ -55,12 +57,24 @@ const WorldStack = () => {
 					setNewStack={setNewStack}
 				/>
 			) : null}
-			{newStack ? <NewStackModal setNewStack={setNewStack} /> : null}
+			<t.In>
+				{newStack ? <NewStackModal setNewStack={setNewStack} /> : null}
+				{newUserModal ? (
+					<NewUserModal setNewUserModal={setNewUserModal} />
+				) : null}
+			</t.In>
 		</>
 	) : (
-		<Html position={[0, 0, 0]}>
-			<h1>Loading...</h1>
-		</Html>
+		<t.In>
+			<section className="absolute top-1/2 left-1/2 w-64 -translate-x-1/2 -translate-y-1/2 rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-6 text-center">
+				<h1 className="mb-4 font-cursive text-3xl font-bold text-th-blue-900">
+					TodoStacks
+				</h1>
+				<p className="mb-4 font-cursive text-2xl font-medium text-th-blue-900">
+					Loading stacks...
+				</p>
+			</section>
+		</t.In>
 	);
 };
 

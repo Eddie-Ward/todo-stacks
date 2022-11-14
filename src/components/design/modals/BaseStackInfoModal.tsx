@@ -1,5 +1,5 @@
-import { Html } from "@react-three/drei";
 import React from "react";
+import { Html } from "@react-three/drei";
 
 interface StackInfoProps {
 	visible: boolean;
@@ -13,7 +13,7 @@ const BaseStackInfoModal = ({ visible, category, length }: StackInfoProps) => {
 			transform
 			position={length === 0 ? [0, 0, 1.5] : [0, 2, 0]}
 			prepend
-			zIndexRange={[100, 0]}
+			zIndexRange={[5, 0]}
 			sprite
 			visible={visible}>
 			{length === 0 ? (

@@ -1,7 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { Canvas } from "@react-three/fiber";
-import World from "./../components/World";
+import App from "../components/App";
 
 const Home: NextPage = () => {
 	return (
@@ -15,9 +14,7 @@ const Home: NextPage = () => {
 					backgroundImage:
 						"linear-gradient(-225deg, #7DE2FC 0%, #B9B6E5 100%)",
 				}}>
-				<Canvas shadows={true} frameloop="demand">
-					<World />
-				</Canvas>
+				<App />
 			</main>
 		</>
 	);

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import {
 	OrbitControls,
 	PerspectiveCamera,
@@ -8,17 +8,13 @@ import {
 } from "@react-three/drei";
 import WorldStack from "./WorldStack";
 import { EventsContext } from "../shared/EventContext";
-import { UserContext } from "../shared/UserContext";
 
 const World = () => {
-	const userId = useMemo(() => {
-		return "636c453d40c8338a3270b102";
-	}, []);
 	const [disableEvents, setDisableEvents] = useState(false);
 
 	return (
 		<>
-			<PerspectiveCamera makeDefault fov={65} />
+			<PerspectiveCamera makeDefault fov={65} position={[10, 10, 10]} />
 			<OrbitControls
 				makeDefault
 				enableRotate={!disableEvents}
@@ -31,15 +27,13 @@ const World = () => {
 				fit
 				clip
 				observe
-				damping={0.5}
-				margin={window.innerWidth < 600 ? 1.3 : 2.25}>
+				damping={0.75}
+				margin={window.innerWidth < 600 ? 1.75 : 2.25}>
 				<Center disableY>
-					<UserContext.Provider value={userId}>
-						<EventsContext.Provider
-							value={{ disableEvents, setDisableEvents }}>
-							<WorldStack />
-						</EventsContext.Provider>
-					</UserContext.Provider>
+					<EventsContext.Provider
+						value={{ disableEvents, setDisableEvents }}>
+						<WorldStack />
+					</EventsContext.Provider>
 				</Center>
 			</Bounds>
 			<ContactShadows

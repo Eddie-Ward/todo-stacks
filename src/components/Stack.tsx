@@ -9,6 +9,7 @@ import StackFloor from "./StackFloor";
 import TodoBox from "./TodoBox";
 import { EventsContext } from "../shared/EventContext";
 import { trpc } from "../utils/trpc";
+import { t } from "../utils/tunnel";
 
 interface StackProps {
 	position: [number, number];
@@ -25,8 +26,10 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 
 	const bounds = useBounds();
 	const { setDisableEvents } = useContext(EventsContext);
+
 	const [visible, setVisible] = useState(false);
 	const [baseTodo, setBaseTodo] = useState(false);
+
 	const [newTodo, setNewTodo] = useState(false);
 	const [editTodo, setEditTodo] = useState(-1);
 	const [editStack, setEditStack] = useState(false);
@@ -36,6 +39,7 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 			setDisableEvents(true);
 		} else {
 			setDisableEvents(false);
+			setVisible(false);
 		}
 		return () => {
 			setDisableEvents(false);
@@ -64,7 +68,13 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 				dimension={dimension}
 				scale={1.5}
 				hue={data.hue}
-				visible={visible || baseTodo || editTodo !== -1}
+				visible={
+					visible ||
+					baseTodo ||
+					editTodo !== -1 ||
+					newTodo ||
+					editStack
+				}
 				length={data.Todo.length}
 				category={data.category}
 				setNewTodo={setNewTodo}
@@ -111,30 +121,34 @@ const Stack = ({ position, dimension, heightScale, stackId }: StackProps) => {
 					) : null}
 				</TodoBox>
 			))}
-			{newTodo ? (
-				<NewTodoModal
-					stackId={stackId}
-					category={data.category}
-					setNewTodo={setNewTodo}
-					setEditStack={setEditStack}
-				/>
-			) : null}
-			{editTodo !== -1 ? (
-				<EditTodoModal
-					stackId={stackId}
-					todo={data.Todo[editTodo]}
-					category={data.category}
-					setEditTodo={setEditTodo}
-					setEditStack={setEditStack}
-				/>
-			) : null}
-			{editStack ? (
-				<EditStackModal
-					stackId={stackId}
-					category={data.category}
-					setEditStack={setEditStack}
-				/>
-			) : null}
+			<t.In>
+				{newTodo ? (
+					<NewTodoModal
+						stackId={stackId}
+						category={data.category}
+						setNewTodo={setNewTodo}
+						setEditStack={setEditStack}
+					/>
+				) : null}
+				{editTodo !== -1 ? (
+					<EditTodoModal
+						stackId={stackId}
+						todo={data.Todo[editTodo]}
+						category={data.category}
+						setEditTodo={setEditTodo}
+						setEditStack={setEditStack}
+					/>
+				) : null}
+				{editStack ? (
+					<EditStackModal
+						stackId={stackId}
+						category={data.category}
+						priorityAsc={data.priorityAsc}
+						durationAsc={data.durationAsc}
+						setEditStack={setEditStack}
+					/>
+				) : null}
+			</t.In>
 		</>
 	) : null;
 };

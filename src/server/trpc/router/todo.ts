@@ -3,21 +3,6 @@ import { z } from "zod";
 import { router, publicProcedure } from "../trpc";
 
 export const todoRouter = router({
-	// getTodoById: publicProcedure
-	// 	.input(
-	// 		z.object({
-	// 			todoId: z.string(),
-	// 		})
-	// 	)
-	// 	.query(async ({ ctx, input }) => {
-	// 		const todo = await ctx.prisma.todo.findUnique({
-	// 			where: {
-	// 				stackId: input.stackId,
-	// 			},
-	// 		});
-	// 		return todos;
-	// 	}),
-
 	addNewTodo: publicProcedure
 		.input(
 			z.object({
