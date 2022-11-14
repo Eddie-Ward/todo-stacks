@@ -81,7 +81,7 @@ const EditTodoModal = ({
 
 	return (
 		<div className="absolute top-0 left-0 z-10 flex h-screen w-screen items-center justify-center">
-			<div className="relative w-72 rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-4 text-left sm:w-80 sm:p-6">
+			<article className="relative w-72 rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-4 text-left sm:w-80 sm:p-6">
 				<button
 					className="btn-icon absolute top-0 right-0 translate-x-1/3 -translate-y-1/3"
 					onClick={(e) => {
@@ -191,7 +191,11 @@ const EditTodoModal = ({
 					</div>
 					<button
 						type="button"
-						className="w-32 rounded-lg bg-th-orange-500 py-1 px-4 font-cursive text-2xl text-white hover:bg-th-orange-700"
+						className={`w-32 rounded-lg  py-1 px-4 font-cursive text-2xl text-white ${
+							!editMutation.isLoading && !deleteMutation.isLoading
+								? "bg-th-orange-500 hover:bg-th-orange-700"
+								: "bg-gray-300"
+						}`}
 						onClick={(e) => {
 							e.stopPropagation();
 							setEditStack(true);
@@ -239,7 +243,7 @@ const EditTodoModal = ({
 						</button>
 					</div>
 				</form>
-			</div>
+			</article>
 		</div>
 	);
 };

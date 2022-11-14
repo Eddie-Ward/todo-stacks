@@ -42,7 +42,7 @@ const BaseTodoModal = ({
 	};
 	return (
 		<Html
-			as="div"
+			as="article"
 			className="relative w-56 rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-3 text-left sm:w-64 sm:p-4"
 			style={{ translate: "-50% -100%" }}
 			position={[0, todo.duration * 0.125 + 0.25, 0]}>

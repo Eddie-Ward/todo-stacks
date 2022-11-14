@@ -45,7 +45,7 @@ const NewStackModal = ({ setNewStack }: NewStackModalProps) => {
 
 	return (
 		<div className="absolute top-0 left-0 z-10 flex h-screen w-screen items-center justify-center">
-			<div className="relative rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-6 text-left">
+			<article className="relative rounded-3xl border-4 border-solid border-th-orange-500 bg-th-blue-200 p-6 text-left">
 				<button
 					className="btn-icon absolute top-0 right-0 translate-x-1/3 -translate-y-1/3"
 					onClick={(e) => {
@@ -97,7 +97,7 @@ const NewStackModal = ({ setNewStack }: NewStackModalProps) => {
 						<Checkmark />
 					</button>
 				</form>
-			</div>
+			</article>
 		</div>
 	);
 };
