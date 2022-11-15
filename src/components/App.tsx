@@ -39,7 +39,7 @@ const App = () => {
 					</p>
 					<button
 						className={`rounded-lg  p-3 font-cursive text-2xl font-medium text-white ${
-							!userMutation.isLoading
+							!userMutation.isLoading && !userMutation.isSuccess
 								? "bg-th-orange-500 hover:bg-th-orange-700"
 								: "bg-gray-300"
 						}`}
@@ -47,7 +47,9 @@ const App = () => {
 							e.stopPropagation();
 							createNewUser();
 						}}
-						disabled={userMutation.isLoading}>
+						disabled={
+							userMutation.isLoading || userMutation.isSuccess
+						}>
 						Get started
 					</button>
 				</article>
