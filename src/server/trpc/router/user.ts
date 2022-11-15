@@ -16,7 +16,7 @@ export const userRouter = router({
 				data: tutorialStack,
 			});
 			const tutorialTodos = createTutorialTodos(stack.id);
-			const todos = await ctx.prisma.todo.createMany({
+			await ctx.prisma.todo.createMany({
 				data: tutorialTodos,
 			});
 			return { userId: user.id };
