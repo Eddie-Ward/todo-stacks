@@ -28,7 +28,7 @@ const World = () => {
 				clip
 				observe
 				damping={0.75}
-				margin={window.innerWidth < 600 ? 1.95 : 3.25}>
+				margin={window.innerWidth < 600 ? 2.35 : 3.5}>
 				<Center disableY>
 					<EventsContext.Provider
 						value={{ disableEvents, setDisableEvents }}>
