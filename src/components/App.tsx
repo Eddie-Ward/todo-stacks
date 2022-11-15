@@ -38,7 +38,11 @@ const App = () => {
 						Welcome!
 					</p>
 					<button
-						className="rounded-lg bg-th-orange-500 p-3 font-cursive text-2xl font-medium text-white hover:bg-th-orange-700"
+						className={`rounded-lg  p-3 font-cursive text-2xl font-medium text-white ${
+							!userMutation.isLoading
+								? "bg-th-orange-500 hover:bg-th-orange-700"
+								: "bg-gray-300"
+						}`}
 						onClick={(e) => {
 							e.stopPropagation();
 							createNewUser();
