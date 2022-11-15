@@ -1,27 +1,40 @@
-# Create T3 App
+# TodoStacks
 
-This is an app bootstrapped according to the [init.tips](https://init.tips) stack, also known as the T3-Stack.
+A todolist companion that presents a 3D visual representation to the traditional todo list. 
 
-## What's next? How do I make an app with this?
+![image](https://user-images.githubusercontent.com/110881795/201808446-ae4203c8-fc92-4a89-b9ac-61f7b7f31567.png)
 
-We try to keep this project as simple as possible, so you can start with the most basic configuration and then move on to more advanced configuration.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Concept
 
-- [Next-Auth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [TailwindCSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+Traditional todo lists are often just tables of raw data with some sorting and labeling options. Visually, each item's visual hierarchy is the same, distinguished only by text labels. At the same time, seeing details of all todos at once can be paralyzing and distracting when todo lists are meant to compartmentalize and order tasks.  This app is meant to present an alternative visual representation of the traditional todo list paradigm. 
 
-We also [roll our own docs](https://beta.create.t3.gg) with some summary information and links to the respective documentation.
+Each category of todos is represented as a stack, and each individual todo a block, colored based on their priority, and sized based on the estimated duration of the task. The app is intended to restrict the user to only interact with the top item of a stack, to mark as complete, though the user can choose to edit other things in the stack. The stacks are a visual representation of the number of tasks for a particular cateogry along with an estimate of the time required without the stress and distraction of seeing the details of every individual item. UserID is stored in the browser's local storage so map to the user's persisted data in a database.
 
-Also checkout these awesome tutorials on `create-t3-app`.
+## Technologies Used
 
-- [Build a Blog With the T3 Stack - tRPC, TypeScript, Next.js, Prisma & Zod](https://www.youtube.com/watch?v=syEWlxVFUrY)
-- [Build a Live Chat Application with the T3 Stack - TypeScript, Tailwind, tRPC](https://www.youtube.com/watch?v=dXRRY37MPuk)
-- [Build a full stack app with create-t3-app](https://www.nexxel.dev/blog/ct3a-guestbook)
-- [A first look at create-t3-app](https://dev.to/ajcwebdev/a-first-look-at-create-t3-app-1i8f)
+The project utilizes Typescript fullstack, and MongoDB for the database.
 
-## How do I deploy this?
+The main tech stack used is the [T3 Stack](https://beta.create.t3.gg) which consists of:
+- [NextJS](https://nextjs.org) as a web framework with React
+- [TailwindCSS](https://tailwindcss.com) as a CSS framework for rapid and dynamic styling of JSX components
+- [Prisma](https://prisma.io) as a Typescript ORM that promotes type-safety
+- [tRPC](https://trpc.io) for writing fully type-safe endpoints that are shared between client and server
 
-Follow our deployment guides for [Vercel](https://beta.create.t3.gg/en/deployment/vercel) and [Docker](https://beta.create.t3.gg/en/deployment/docker) for more information.
+Additional libraries:
+- [Three.js](https://threejs.org), the most popular Javascript library for implementing 3D rendering using WebGL.
+- [React Three Fiber](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction), a React renderer for Three.js
+- [Drei](https://github.com/pmndrs/drei), a library for additional helpers for React Three Fiber
+- [React Hook Form](https://react-hook-form.com), a lightweight Typescript library for easy performant forms with validation
+- [Tunnel-Rat](https://github.com/pmndrs/tunnel-rat), an escape hatch to allow working across separate renderers, transferring between HTML and React Three Fiber.
+- Additionally, [Zod](https://zod.dev) and [React Query](https://tanstack.com/query/v4) are both dependencies of tRPC.
+
+## Installation Instructions
+1. Fork and clone this repository.
+2. Install node modules by running `npm install`
+3. You will need to set up an .env file with a key of `DATABASE_URL` to a valid Mongo database URL
+4. Set up Prisma with `npx prisma db push` to generate types in Typescript for the schemas. You can optionally run `npx prisma studio` to verify the database connection and for a GUI view of the data.
+5. Run `npm run dev`
+
+## Contribution guidelines
+Feel free to submit proposal changes and feature ideas by submitting an issue ticket. This project is definitely still WIP, and I will continue updating it.
